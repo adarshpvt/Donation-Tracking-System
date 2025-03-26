@@ -1,0 +1,45 @@
+{% extends 'index.html' %}
+{% block content %}
+<div class="container">
+<h2 class="text-center">Edit Beneficiary</h2>
+<form method="POST" action="{% url 'update_beneficiary' beneficiary.id %}">
+{% csrf_token %}
+
+<div class="form-group">
+    <label for="bname">Beneficiary Name</label>
+    <input type="text" class="form-control" id="bname" name="username" value="{{ beneficiary.username }}" required>
+</div>
+
+
+
+
+
+
+    <div class="form-group">
+                            <label for="category">Service Category</label>
+                            <select class="form-control" id="category" name="category" required>
+                                 <option>{{ beneficiary.category }}</option>
+                                <option>Orphanage Support</option>
+                                <option>Medical Treatment Support</option>
+                                <option>Support Child Education</option>
+                                <option>Empower Women</option>
+                                <option>Support for Old Age Homes</option>
+                                <option>Disaster Relief Fund</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="status">Status</label>
+                            <input type="text" class="form-control" id="status" name="status"  value="{{ beneficiary.status }}">
+                        </div>
+
+                        <div class="form-group">
+                            <input type="hidden" class="form-control" id="re_date" name="request_date" value="{{ beneficiary.request_date }}" >
+                        </div>
+
+
+
+<button type="submit" class="btn btn-success">Update</button>
+</form>
+</div>
+{% endblock %}

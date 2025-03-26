@@ -1,0 +1,236 @@
+{% extends 'main.html' %}
+{% load static %}
+<!-- Custom CSS for Enhanced Input Fields -->
+<style>
+    .form-control:focus {
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 10px rgba(220, 53, 69, 0.4) !important;
+    }
+
+    select.form-control:hover,
+    input.form-control:hover {
+        transform: scale(1.02);
+        transition: 0.2s ease-in-out;
+    }
+
+    button.btn-danger:hover {
+        background-color: #b71c1c !important;
+        box-shadow: 0 0 15px rgba(183, 28, 28, 0.6) !important;
+    }
+</style>
+
+{% block content %}
+    <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'main_page' %}">GiveTrack</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav"
+                aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="ftco-nav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><a href="{% url 'main_page' %}" class="nav-link">Home</a></li>
+                    {% if request.session.user_id %}
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" id="servicesDropdown" role="button" data-toggle="dropdown">Services</a>
+                            <div class="dropdown-menu" aria-labelledby="servicesDropdown">
+                                <a class="dropdown-item" href="{% url 'donation' %}">Donar</a>
+                                <a class="dropdown-item" href="{% url 'beneficiary' %}">Beneficiary</a>
+                                <a class="dropdown-item" href="{% url 'blood' %}">Blood Donar</a>
+                            </div>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item"><a href="{% url 'about' %}" class="nav-link">About</a></li>
+                    <li class="nav-item"><a href="{% url 'blog' %}" class="nav-link">Blog</a></li>
+                    <li class="nav-item"><a href="{% url 'events' %}" class="nav-link">Events</a></li>
+                    <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
+                    {% if request.session.user_id %}
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" id="userDropdown" role="button" data-toggle="dropdown">
+                                <i class="fas fa-user"></i> Welcome, {{ request.session.username }}
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                                <a class="dropdown-item" href="{% url 'mydonations' %}">My Dashboard</a>
+                            </div>
+                        </li>
+                    {% else %}
+                        <li class="nav-item"><a href="{% url 'login_form' %}" class="nav-link"><i class="fas fa-user"></i> Login</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero-wrap" style="background-image: url({% static 'images/blood3.jpg' %});" data-stellar-background-ratio="0.5">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row no-gutters slider-text align-items-center justify-content-center">
+                <div class="col-md-7 ftco-animate text-center">
+                    <h1 class="mb-3 bread">Blood Donation</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="ftco-section">
+        <div class="container">
+            <div class="row justify-content-center mb-5 pb-3">
+                <div class="col-md-5 heading-section ftco-animate text-center">
+                    <h2 class="mb-4">Blood Donation Services</h2>
+                    <p>Donate blood, save lives! Your contribution can be the lifeline someone desperately needs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<section class="ftco-counter ftco-intro" id="section-counter">
+    <div class="container">
+        <div class="row no-gutters">
+            <div class="col-md-5 d-flex justify-content-center counter-wrap ftco-animate">
+                <div class="block-18 color-1 align-items-stretch">
+                    <div class="text">
+                        <span>Helping Lives</span>
+                        <strong class="number" data-number="1432805">0</strong>
+                        <span>Blood donations made worldwide</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md d-flex justify-content-center counter-wrap ftco-animate">
+                <div class="block-18 color-2 align-items-stretch">
+                    <div class="text">
+                        <h3 class="mb-4">Donate Blood</h3>
+                        <p>Your blood donation can save lives. Become a donor today!</p>
+                        <p><a  href="{% url 'blood_re' %}" class="btn btn-white px-3 py-2 mt-2">Donate Blood</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md d-flex justify-content-center counter-wrap ftco-animate">
+                <div class="block-18 color-3 align-items-stretch">
+                    <div class="text">
+                        <h3 class="mb-4">Find a Donor</h3>
+                        <p>Looking for a blood donor? Search for available donors near you.</p>
+                        <p><button id="findDonorBtn"  class="btn btn-white px-3 py-2 mt-2">Find a Donor</button></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div id="donorSearch" class="container mt-4 p-4 rounded-4 shadow bg-white" style="display: none; max-width: 720px;">
+    <h3 class="text-center text-danger mb-3 fw-bold text-uppercase"> Find a Blood Donor</h3>
+
+<form id="donorSearchForm" method="post">
+    {% csrf_token %}
+    <div class="d-flex flex-wrap gap-2 align-items-center">
+        <!-- Blood Group Selection -->
+        <div class="flex-grow-1">
+            <label class="form-label fw-semibold text-muted small">Blood Group</label>
+            <select class="form-select form-select-sm border-danger shadow-sm rounded-3" name="blood_group" id="bloodGroup" required>
+                <option value="">Select</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+            </select>
+        </div>
+
+        <!-- Location Input -->
+        <div class="flex-grow-1">
+            <label class="form-label fw-semibold text-muted small">Location</label>
+            <input type="text" class="form-select form-select-sm border-danger shadow-sm rounded-3"
+                   name="location" id="location" placeholder="Enter location" required>
+        </div>
+
+        <!-- Search Button -->
+        <div class="flex-grow-1">
+            <button type="submit" class="btn btn-danger btn-sm  fw-bold rounded-pill shadow-sm">
+                 Search
+            </button>
+        </div>
+
+    </div>
+</form>
+
+    <!-- Results Section -->
+    <div id="donorResults" class="mt-4 p-3 bg-light shadow-sm rounded-3"></div>
+</div>
+
+<style>
+    /* Modern Styling */
+    #donorSearch {
+        background: #ffffff;
+        border: 1px solid rgba(220, 53, 69, 0.2);
+        box-shadow: 0px 5px 15px rgba(220, 53, 69, 0.1);
+    }
+    select, input {
+        transition: all 0.3s ease-in-out;
+    }
+    select:hover, input:hover, select:focus, input:focus {
+        border-color: #dc3545;
+        box-shadow: 0px 0px 8px rgba(220, 53, 69, 0.2);
+    }
+    button:hover {
+        background: #c82333;
+        transform: scale(1.05);
+        transition: 0.2s ease-in-out;
+    }
+</style>
+<script>document.addEventListener("DOMContentLoaded", function () {
+    const donorButton = document.getElementById("findDonorBtn");
+    const donorSearchDiv = document.getElementById("donorSearch");
+
+    // Show/hide donor search section
+    donorButton.addEventListener("click", function (event) {
+        event.preventDefault();
+        donorSearchDiv.style.display = donorSearchDiv.style.display === "none" ? "block" : "none";
+    });
+
+    // Handle Donor Search Form Submission
+    document.getElementById("donorSearchForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const bloodGroup = document.getElementById("bloodGroup").value;
+        const location = document.getElementById("location").value;
+        const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+        fetch("{% url 'search_donors' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken
+            },
+            body: JSON.stringify({ blood_group: bloodGroup, location: location })
+        })
+        .then(response => response.json())
+        .then(data => {
+            let resultHTML = `<h5 class='text-danger fw-bold'>🔴 Available Donors</h5>`;
+            if (data.length === 0) {
+                resultHTML += `<p class='text-muted'>No donors found for the selected criteria.</p>`;
+            } else {
+                resultHTML += "<ul class='list-group'>";
+                data.forEach(donor => {
+                    resultHTML += `<li class='list-group-item'>
+                        <strong>Name:</strong> ${donor.full_name}<br>
+                        <strong>Blood Group:</strong> ${donor.blood_group}<br>
+                        <strong>Location:</strong> ${donor.location}<br>
+                        <strong>Contact:</strong> ${donor.mobile}
+                    </li>`;
+                });
+                resultHTML += "</ul>";
+            }
+            document.getElementById("donorResults").innerHTML = resultHTML;
+        })
+        .catch(error => {
+            console.error("Error fetching donors:", error);
+            document.getElementById("donorResults").innerHTML = `<p class='text-danger'>⚠️ Unable to fetch donor data. Please try again.</p>`;
+        });
+    });
+});
+</script>
+{% endblock %}

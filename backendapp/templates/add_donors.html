@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+{% extends 'index.html' %}
+{% block content %}
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Add Donation</title>
+
+  <style>
+    .card-title {
+      font-weight: bold;
+      font-size: 1.5rem;
+    }
+
+    .form-group label {
+      font-weight: 500;
+    }
+
+    .btn-primary {
+      background-color: #4CAF50;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: #45a049;
+    }
+
+    @media (max-width: 991px) {
+      #sidebar {
+        position: fixed;
+        z-index: 1050;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="row">
+    <div class="col-md-8 mb-12">
+      <div class="card shadow mb-4">
+        <div class="card-body">
+          <h4 class="card-title text-center font-weight-bold">Add Donation Details</h4>
+
+          <form method="POST" action="{% url 'save_donor' %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+              <label for="username">Donor Name</label>
+              <input type="text" class="form-control" id="username" name="username" placeholder="Enter Donor Name" required>
+            </div>
+
+            <div class="form-group">
+              <label>Donation Category</label>
+              <select class="form-control" name="dtype" id="dtype" required onchange="generateTransactionID()">
+                <option disabled selected>Select Donation Category</option>
+                <option>Child Education Support</option>
+                <option>Patient Treatment Assistance</option>
+                <option>Old Age Home Support</option>
+                <option>Food Support for Children</option>
+                <option>Others</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="amount">Donation Amount</label>
+              <input type="number" class="form-control" id="amount" name="amount" step="0.01" placeholder="Enter Amount" required>
+            </div>
+
+            <!-- Visible Transaction ID -->
+            <div class="form-group">
+              <label for="transaction_id">Transaction ID</label>
+              <input type="text" class="form-control" id="transaction_id" name="transaction_id" readonly>
+            </div>
+
+            <div class="form-group">
+              <label for="payment_date">Payment Date</label>
+              <input type="text" class="form-control" id="payment_date" name="payment_date" value="{% now 'Y-m-d H:i:s' %}" readonly>
+            </div>
+
+            <button type="submit" class="btn btn-primary d-block mx-auto" style="width: 150px; border-radius:5px;">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function generateTransactionID() {
+      let category = document.getElementById("dtype").value;
+      if (!category) return;
+
+      // Extract first two letters of each word and create short category name
+      let words = category.split(" ");
+      let shortCategory = words.map(word => word.slice(0, 2)).join("").toUpperCase();
+
+      // Generate random 4-digit number
+      let randomNumber = Math.floor(1000 + Math.random() * 9000);
+
+      // Format Transaction ID
+      let transactionID = `GT-${shortCategory}-${randomNumber}`;
+      document.getElementById("transaction_id").value = transactionID;
+    }
+  </script>
+
+</body>
+
+</html>
+{% endblock %}

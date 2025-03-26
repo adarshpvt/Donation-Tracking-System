@@ -1,0 +1,151 @@
+    {% extends 'index.html' %}
+    {% block content %}
+    {% load static %}
+
+    <style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .card-container {
+        max-width: 95%;
+        margin: auto;
+    }
+
+    .card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        background-color: white;
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .dataTables_filter input {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 5px;
+    }
+
+    .custom-btn {
+        background-color: #5454c4;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        font-size: 14px;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(61, 61, 176, 0.5);
+    }
+
+    .delete-btn {
+        background-color: #21A817FF;
+        box-shadow: 0 4px 8px rgba(176, 61, 61, 0.5);
+    }
+
+    @media (max-width: 768px) {
+        .custom-btn {
+        font-size: 12px;
+        padding: 6px 10px;
+        }
+    }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <div class="card-container">
+    <div class="card">
+        <h3 class="text-center mb-4">Blood Donors List</h3>
+        <div class="table-container">
+        <table id="bloodDonorTable" class="table table-striped table-bordered display expandable-table">
+            <thead>
+            <tr>
+                <th>Donor Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Blood Group</th>
+                <th>Availability</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for i in blood_donors %}
+                <tr>
+                <td>{{ i.name }}</td>
+                <td>{{ i.email }}</td>
+                <td>{{ i.phone }}</td>
+                <td>{{ i.blood_group }}</td>
+                <td>{{ i.availability }}</td>
+                <td>
+                    <a href="#" class="custom-btn" title="Edit"
+                    onclick="confirmEdit('{% url 'edit_blood_donor' i.id %}')">
+                    <i class="fas fa-edit"></i>
+                    </a>&nbsp;
+
+                    <a href="#" class="custom-btn delete-btn" title="Delete"
+                    onclick="confirmDelete('{% url 'delete_blood_donor' i.id %}')">
+                    <i class="fas fa-trash-alt"></i>
+                    </a>&nbsp;
+                </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </div>
+    </div>
+
+    <script src="{% static 'admin/vendors/js/vendor.bundle.base.js' %}"></script>
+    <script src="{% static 'admin/vendors/datatables.net/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'admin/vendors/datatables.net-bs4/dataTables.bootstrap4.js' %}"></script>
+
+    <script>
+    $(document).ready(function () {
+        $('#bloodDonorTable').DataTable({
+        responsive: true,
+        paging: true,
+        searching: true,
+        ordering: true,
+        language: {
+            search: "Search Blood Donor:"
+        },
+        });
+    });
+
+    function confirmEdit(editUrl) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Do you want to edit this Blood Donor Details?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, edit it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = editUrl;
+            }
+        });
+    }
+
+    function confirmDelete(deleteUrl) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this donor!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = deleteUrl;
+            }
+        });
+    }
+    </script>
+
+    {% endblock %}

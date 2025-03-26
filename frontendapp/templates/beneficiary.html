@@ -1,0 +1,257 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<html lang="en">
+  <head>
+    <title>Welfare - Free Bootstrap 4 Template by Colorlib</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css?family=Dosis:200,300,400,500,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Overpass:300,400,400i,600,700" rel="stylesheet">
+
+
+  </head>
+  <body>
+
+   <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'main_page' %}">
+            GiveTrack
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav"
+            aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="ftco-nav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item "><a href="{% url 'main_page' %}" class="nav-link">Home</a></li>
+
+                {% if request.session.user_id %}
+                    <!-- Services Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" id="servicesDropdown" role="button" data-toggle="dropdown">
+                            Services
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="servicesDropdown">
+                            <a class="dropdown-item" href="{% url 'donation' %}">Donar</a>
+                            <a class="dropdown-item" href="{% url 'beneficiary' %}">Beneficiary</a>
+                            <a class="dropdown-item" href="{% url 'blood' %}">Blood Donar</a>
+                        </div>
+                    </li>
+                {% endif %}
+
+                <li class="nav-item"><a href="{% url 'about' %}" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="{% url 'blog' %}" class="nav-link">Blog</a></li>
+                <li class="nav-item"><a href="{% url 'events' %}" class="nav-link">Events</a></li>
+                <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
+
+                {% if request.session.user_id %}
+                    <!-- User Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" id="userDropdown" role="button" data-toggle="dropdown">
+                            <i class="fas fa-user"></i> Welcome, {{ request.session.username }}
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="userDropdown">
+                            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                            <a class="dropdown-item" href="{% url 'mydonations' %}">My Dashboard</a>
+                        </div>
+                    </li>
+                {% else %}
+                    <!-- Login Link -->
+                    <li class="nav-item">
+                        <a href="{% url 'login_form' %}" class="nav-link">
+                            <i class="fas fa-user"></i> Login
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+    <!-- END nav -->
+
+    <div class="hero-wrap" style="background-image: url({% static 'images/bg_5.jpg' %});" data-stellar-background-ratio="0.5">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center" data-scrollax-parent="true">
+          <div class="col-md-7 ftco-animate text-center" data-scrollax=" properties: { translateY: '70%' }">
+             <p class="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span class="mr-2"><a href="index.html">Home</a></span> <span>Beneficiary</span></p>
+            <h1 class="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Beneficiary</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <section class="ftco-section">
+      <div class="container">
+
+<div class="row">
+    <!-- Child Education Support -->
+    <div class="col-md-4 ftco-animate">
+        <div class="cause-entry">
+            <a href="#" class="img" style="background-image: url({% static 'images/education.jpg' %});"></a>
+            <div class="text p-3 p-md-4">
+                <h3><a href="#">Support Child Education</a></h3>
+                <p>Help underprivileged children get access to education, books, and school supplies.</p>
+                 <form method="post" class="request-form" action="{% url 'request_service' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="username" value="{{user_details.username }}">
+                    <input type="hidden" name="category" value="Support Child Education">
+                    <input type="hidden" name="status" value="Pending">
+                    <button type="submit" class="btn btn-primary py-2 px-4" style="border-radius:10px">Request Service</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Patient Treatment Support -->
+    <div class="col-md-4 ftco-animate">
+        <div class="cause-entry">
+            <a href="#" class="img" style="background-image: url({% static 'images/medical.jpg' %});"></a>
+            <div class="text p-3 p-md-4">
+                <h3><a href="#">Medical Treatment Support</a></h3>
+                <p>Provide financial aid to patients in need of medical care and life-saving treatments.</p>
+                 <form method="post" class="request-form" action="{% url 'request_service' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="username" value="{{user_details.username }}">
+                    <input type="hidden" name="category" value="Medical Treatment Support">
+                    <input type="hidden" name="status" value="Pending">
+                    <button type="submit" class="btn btn-primary py-2 px-4" style="border-radius:10px">Request Service</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Old Age Home Support -->
+    <div class="col-md-4 ftco-animate">
+        <div class="cause-entry">
+            <a href="#" class="img" style="background-image: url({% static 'images/oldage.jpg' %});"></a>
+            <div class="text p-3 p-md-4">
+                <h3><a href="#">Support for Old Age Homes</a></h3>
+                <p>Provide food, shelter, and medical support to elderly people in need.</p>
+                 <form method="post" class="request-form" action="{% url 'request_service' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="username" value="{{user_details.username }}">
+                    <input type="hidden" name="category" value="Support for Old Age Homes">
+                    <input type="hidden" name="status" value="Pending">
+                    <button type="submit" class="btn btn-primary py-2 px-4" style="border-radius:10px">Request Service</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Disaster Relief Assistance -->
+    <div class="col-md-4 ftco-animate">
+        <div class="cause-entry">
+            <a href="#" class="img" style="background-image: url({% static 'images/cause-2.jpg' %});"></a>
+            <div class="text p-3 p-md-4">
+                <h3><a href="#">Disaster Relief Fund</a></h3>
+                <p>Help families affected by natural disasters with shelter, food, and medical aid.</p>
+                 <form method="post" class="request-form" action="{% url 'request_service' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="username" value="{{user_details.username }}">
+                    <input type="hidden" name="category" value="Disaster Relief Fund">
+                    <input type="hidden" name="status" value="Pending">
+                    <button type="submit" class="btn btn-primary py-2 px-4" style="border-radius:10px">Request Service</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Women Empowerment Support -->
+    <div class="col-md-4 ftco-animate">
+        <div class="cause-entry">
+            <a href="#" class="img" style="background-image: url({% static 'images/woman.jpg' %});"></a>
+            <div class="text p-3 p-md-4">
+                <h3><a href="#">Empower Women</a></h3>
+                <p>Support women through education, vocational training, and entrepreneurship programs.</p>
+                 <form method="post" class="request-form" action="{% url 'request_service' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="username" value="{{user_details.username }}">
+                    <input type="hidden" name="category" value="Empower Women">
+                    <input type="hidden" name="status" value="Pending">
+                    <button type="submit" class="btn btn-primary py-2 px-4" style="border-radius:10px">Request Service</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orphanage Aid -->
+    <div class="col-md-4 ftco-animate">
+        <div class="cause-entry">
+            <a href="#" class="img" style="background-image: url({% static 'images/cause-6.jpg' %});"></a>
+            <div class="text p-3 p-md-4">
+                <h3><a href="#">Orphanage Support</a></h3>
+                <p>Provide food, education, and shelter to orphaned children.</p>
+                <form method="post" class="request-form" action="{% url 'request_service' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="username" value="{{user_details.username }}">
+                    <input type="hidden" name="category" value="Orphanage Support">
+                    <input type="hidden" name="status" value="Pending">
+                    <button type="submit" class="btn btn-primary py-2 px-4" style="border-radius:10px">Request Service</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll(".request-form").forEach(form => {
+        form.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "Do you want to submit your request?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, submit!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+
+    // Display Django messages with SweetAlert
+    {% if messages %}
+        {% for message in messages %}
+            Swal.fire({
+                title: "{% if message.tags == 'error' %}Error{% else %}Success{% endif %}",
+                text: "{{ message }}",
+                icon: "{% if message.tags == 'error' %}error{% else %}success{% endif %}",
+                confirmButtonColor: "#3085d6"
+            });
+        {% endfor %}
+    {% endif %}
+});
+</script>
+
+
+
+
+
+        </div>
+
+      </div>
+    </section>
+
+
+
+
+
+
+  <!-- loader -->
+
+
+
+
+  </body>
+</html>
+{% endblock %}

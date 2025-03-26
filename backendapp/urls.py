@@ -1,0 +1,36 @@
+from django.urls import path
+from backendapp import views
+from .views import login
+urlpatterns=[
+   path('admin_login/',views.admin_login,name="admin_login"),
+   path('add_donors/',views.add_donors,name="add_donors"),
+   path('save_donor/',views.save_donor,name="save_donor"),
+   path('view_donors/',views.view_donors,name="view_donors"),
+   path('edit_donor/<int:id>/', views.edit_donor, name='edit_donor'),
+   path('delete_donor/<int:id>/', views.delete_donor, name='delete_donor'),
+   path('update_donor/<int:id>/', views.update_donor, name='update_donor'),
+   path('save_beneficiary/', views.save_beneficiary, name='save_beneficiary'),
+   path('view_beneficiaries/', views.view_beneficiaries, name='view_beneficiaries'),
+   path('edit_beneficiary/<int:id>/', views.edit_beneficiary, name='edit_beneficiary'),
+   path('update_beneficiary/<int:id>/', views.update_beneficiary, name='update_beneficiary'),
+   path('delete_beneficiary/<int:id>/', views.delete_beneficiary, name='delete_beneficiary'),
+   path('save_blood_donor/', views.save_blood_donor, name='save_blood_donor'),
+   path('view_blood_donors/', views.view_blood_donors, name='view_blood_donors'),
+   path('delete_blood_donor/<int:id>/', views.delete_blood_donor, name='delete_blood_donor'),
+   path('edit_blood_donor/<int:id>/', views.edit_blood_donor, name='edit_blood_donor'),
+   path('update_blood_donor/<int:id>/', views.update_blood_donor, name='update_blood_donor'),
+   path('save_product/', views.save_product, name='save_product'),
+   path('view_products/', views.view_products, name='view_products'),
+   path('edit_product/<int:id>/', views.edit_product, name='edit_product'),
+   path('update_product/<int:id>/', views.update_product, name='update_product'),
+   path('delete_product/<int:id>/', views.delete_product, name='delete_product'),
+   path('apply_job/', views.apply_job, name='apply_job'),
+   path('save_job_application/', views.save_job_application, name='save_job_application'),
+   path('view_jobs/', views.view_jobs, name='view_jobs'),
+   path('requestapprove/', views.requestapprove, name='requestapprove'),
+   path('update-status/', views.update_status, name='update_status'),
+   path('datetime/', views.my_view, name='datetime_page'),
+   path('login_view/',views.login_view, name='login_view'),
+   path('login_page/',views.login_page, name='login_page'),
+
+]

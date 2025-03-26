@@ -1,0 +1,434 @@
+{% load static %}
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Secure Donation - Two Slide Modal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Basic Reset and Body Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: url("{% static 'images/bg_3.jpg' %}") no-repeat center center/cover;
+      background-attachment: fixed;
+      padding: 20px;
+    }
+    /* Modal Container with Transparent White Background */
+    .modal {
+      background: rgba(30, 30, 30, 0.6); /* More transparent */
+      border-radius: 15px;
+      max-width: 800px;
+      width: 100%;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      position: relative;
+    }
+    /* Close Button */
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 10;
+      color: #34495e;
+    }
+    /* Slides Wrapper */
+    .slides {
+      display: flex;
+      width: 200%; /* Two slides side by side */
+      transition: transform 0.5s ease;
+    }
+    .slide {
+      width: 50%;
+      padding: 25px;
+      box-sizing: border-box;
+    }
+    /* Donation Slide Layout: Two Columns */
+    .donation-slide {
+      display: flex;
+      gap: 20px;
+    }
+    .left-image {
+      flex: 1;
+    }
+    .left-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+    .donation-details {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .donation-details h3 {
+      color: #2c3e50;
+      margin-bottom: 15px;
+    }
+    .donation-details p {
+      color: #34495e;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+    /* Donation Container Styles */
+    .donation-container {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    .toggle-buttons {
+      display: flex;
+      background: #f5f6fa;
+      padding: 5px;
+      border-radius: 10px;
+      margin-bottom: 25px;
+    }
+    .toggle-buttons button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .toggle-buttons .active {
+      background: #f7931e;
+      color: white;
+      box-shadow: 0 4px 15px rgba(247, 147, 30, 0.3);
+    }
+    .amount-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .amount-buttons button {
+      padding: 15px;
+      border: 2px solid #f7931e;
+      background: transparent;
+      color: #f7931e;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .amount-buttons button:hover {
+      background: #f7931e;
+      color: white;
+      transform: translateY(-2px);
+    }
+    .amount-buttons button.selected {
+      background: #f7931e;
+      color: white;
+      box-shadow: 0 4px 15px rgba(247, 147, 30, 0.3);
+    }
+    .custom-amount {
+      margin-bottom: 20px;
+    }
+    .custom-amount input {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+    .custom-amount input:focus {
+      border-color: #f7931e;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(247, 147, 30, 0.2);
+    }
+    .donate-button {
+      width: 100%;
+      padding: 15px;
+      background: #f7931e;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(247, 147, 30, 0.3);
+    }
+    .donate-button:hover {
+      background: #e67e22;
+      transform: translateY(-2px);
+    }
+    .donate-button:active {
+      transform: translateY(1px);
+    }
+    /* Thank You Slide */
+    .thank-you-container {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .thank-you-container h3 {
+      color: #2c3e50;
+      margin-bottom: 15px;
+    }
+    .thank-you-container p {
+      color: #34495e;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+
+<div class="hero-wrap" style="background-image: url({% static 'images/bg_3.jpg' %});" data-stellar-background-ratio="0.5">
+
+  <div class="overlay"></div>
+  <div class="container">
+  <div class="modal" id="donationModal">
+    <!-- Cross Button to Close Modal -->
+    <button class="close-btn" onclick="closeModal()">×</button>
+    <div class="slides" id="slides">
+      <!-- Slide 1: Donation Form with Two Column Layout -->
+      <div class="slide" id="slide1">
+        <div class="donation-slide">
+          <!-- Left Column: Image -->
+          <div class="left-image">
+            <img src="{% static 'images/download.avif' %}" alt="Donation Image">
+          </div>
+          <!-- Right Column: Donation Details and Form -->
+          <div class="donation-details">
+            <h3>Make a Difference Today</h3>
+            <p>Your donation transforms lives. Every contribution helps create positive change in our community.</p>
+            <div class="donation-container">
+              <h2>Donate Now</h2>
+
+              <div class="amount-buttons">
+                <button onclick="selectAmount(4000)" data-amount="4000">₹4,000</button>
+                <button onclick="selectAmount(2000)" data-amount="2000">₹2,000</button>
+                <button onclick="selectAmount(1000)" data-amount="1000">₹1,000</button>
+                <button onclick="selectAmount(600)" data-amount="600">₹600</button>
+                <button onclick="selectAmount(500)" data-amount="500">₹500</button>
+                <button onclick="selectAmount(450)" data-amount="450">₹450</button>
+              </div>
+<form id="donationForm" method="post" action="{% url 'save_pay_donation' %}">
+  {% csrf_token %}
+
+  <!-- Hidden Username Field -->
+  <div class="custom-amount">
+    <input type="hidden" id="username" value="{{ user_details.username }}" name="username">
+  </div>
+
+  <!-- Hidden Category Field -->
+  <div class="custom-amount">
+    <input type="hidden" id="categoryInput" name="category" readonly>
+  </div>
+
+  <!-- Custom Amount Input -->
+  <div class="custom-amount">
+    <input type="number" id="customAmount" placeholder="Enter custom amount" min="1" name="amt" required>
+  </div>
+
+  <!-- Current Date & Time Input (Auto-filled) -->
+  <div class="custom-amount">
+    <input type="hidden" id="dateTime" name="date_time" readonly>
+  </div>
+
+  <!-- Auto-Generated Transaction ID -->
+  <div class="custom-amount">
+    <input type="hidden" id="transactionId" name="transaction_id" readonly>
+  </div>
+
+  <button type="submit" class="donate-button">Donate Now</button>
+</form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Slide 2: Thank You/Confirmation -->
+      <div class="slide" id="slide2">
+        <div class="thank-you-container">
+          <h3>Thank You for Your Donation!</h3>
+          <p id="thankYouMessage">Your generosity makes a real difference. We appreciate your support.</p>
+          <button class="donate-button" onclick="prevSlide()">Make Another Donation</button>
+          <p id="thankYouMessage">OR</p>
+          <button class="donate-button" href="{% url 'main_page' %}">Go to Home Page</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+<script>document.addEventListener("DOMContentLoaded", function () {
+    // Auto-fill current date & time
+    let now = new Date();
+    document.getElementById("dateTime").value = now.toLocaleString();
+
+    // Fetch category value properly
+    let categoryElement = document.getElementById("categoryInput");
+    let category = categoryElement ? categoryElement.value.trim().toUpperCase() : "GEN";
+
+    // Generate a compact transaction ID
+    let shortCategory = category.substring(0, 2); // First two letters of category
+    let uniqueNum = now.getTime().toString().slice(-5); // Last 5 digits of timestamp
+    let transactionID = `GT${shortCategory}${uniqueNum}`;
+
+    document.getElementById("transactionId").value = transactionID;
+});
+</script>
+  <script>
+    let donationType = 'oneTime';
+    const slides = document.getElementById('slides');
+
+    function setDonationType(type) {
+      donationType = type;
+      document.querySelectorAll('.toggle-buttons button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.getElementById(type + 'Btn').classList.add('active');
+    }
+
+    function selectAmount(amount) {
+      const buttons = document.querySelectorAll('.amount-buttons button');
+      buttons.forEach(btn => btn.classList.remove('selected'));
+      const clickedButton = document.querySelector(`[data-amount="${amount}"]`);
+      if (clickedButton) {
+        clickedButton.classList.add('selected');
+      }
+      document.getElementById('customAmount').value = amount;
+    }
+
+    function formatAmount(amount) {
+      return new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR'
+      }).format(amount);
+    }
+
+    function nextSlide() {
+      const amountInput = document.getElementById('customAmount');
+      const amount = parseFloat(amountInput.value);
+      if (!amount || amount <= 0) {
+        alert('Please enter a valid donation amount.');
+        amountInput.focus();
+        return;
+      }
+      const formattedAmount = formatAmount(amount);
+      const donationText = donationType === 'oneTime' ? 'one-time donation' : 'monthly contribution';
+      document.getElementById('thankYouMessage').innerText =
+        `Thank you for your ${donationText} of ${formattedAmount}! Your generosity makes a real difference.`;
+      slides.style.transform = "translateX(-50%)";
+    }
+
+    function prevSlide() {
+      slides.style.transform = "translateX(0%)";
+    }
+
+    function closeModal() {
+      // This function hides the modal by setting its display to none.
+      document.getElementById('donationModal').style.display = 'none';
+    }
+
+    // Validate custom amount input to be non-negative
+    document.getElementById('customAmount').addEventListener('input', function(e) {
+      if (e.target.value < 0) {
+        e.target.value = 0;
+      }
+    });
+
+
+
+  </script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const category = urlParams.get("category");
+    if (category) {
+      document.getElementById("categoryInput").value = category;
+    }
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>document.addEventListener("DOMContentLoaded", function () {
+    document.querySelector(".donate-button").addEventListener("click", function (e) {
+        e.preventDefault(); // Prevent default form submission
+
+        let formData = new FormData(document.querySelector("form"));
+
+        fetch("{% url 'save_pay_donation' %}", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    title: "Proceed to Payment?",
+                    text: "Your donation has been recorded. Would you like to complete the payment?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes, Pay Now"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        redirectToRazorpay(data.payment_order_id, data.amount);
+                    }
+                });
+            } else {
+                Swal.fire("Error", "Something went wrong. Please try again.", "error");
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    });
+
+    function redirectToRazorpay(orderId, amount) {
+        let options = {
+            key: "rzp_test_QzIn7XrT0zJ9If", // Replace with your Razorpay API key
+            amount: amount,
+            currency: "INR",
+            order_id: orderId,
+            name: "GiveTrack",
+            description: "Donation Payment",
+            prefill: {
+                  name: "{{ user_details.username }}",
+                  email: "{{ user_details.email }}",
+              },
+            handler: function (response) {
+                Swal.fire("Payment Successful!", "Thank you for your generous donation.", "success")
+                .then(() => {
+                    window.location.href = "{% url 'main_page' %}";
+                });
+            },
+            theme: {
+                color: "#4badeb"
+            }
+        };
+
+        let rzp = new Razorpay(options);
+        rzp.open();
+    }
+});
+</script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+{% extends 'index.html' %}
+{% block content %}
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Edit Product</title>
+
+<style>
+.card-title {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.form-group label {
+    font-weight: 500;
+}
+
+.btn-primary {
+    background-color: #f0ad4e;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #ec971f;
+}
+
+@media (max-width: 991px) {
+    #sidebar {
+    position: fixed;
+    z-index: 1050;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="row">
+<div class="col-md-8 mb-12">
+    <div class="card shadow mb-4">
+    <div class="card-body">
+        <h4 class="card-title text-center font-weight-bold">Edit Product</h4>
+
+        <form method="POST" action="{% url 'update_product' product.id %}" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="pname">Product Name</label>
+            <input type="text" class="form-control" id="pname" name="pname" value="{{ product.name }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="pprice">Price</label>
+            <input type="number" class="form-control" id="pprice" name="pprice" value="{{ product.price }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="pquantity">Quantity</label>
+            <input type="number" class="form-control" id="pquantity" name="pquantity" value="{{ product.quantity }}" required>
+        </div>
+
+        <div class="form-group">
+            <label>Current Image</label><br>
+            <img src="{{ product.image.url }}" alt="Product Image" width="100">
+        </div>
+
+        <div class="form-group">
+            <label for="pimage">Update Image (Optional)</label>
+            <input type="file" class="form-control" id="pimage" name="pimage">
+        </div>
+
+        <button type="submit" class="btn btn-primary d-block mx-auto" style="width: 150px; border-radius:5px;">Update</button>
+        </form>
+    </div>
+    </div>
+</div>
+</div>
+
+</body>
+
+</html>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'mydonation.html' %}
+{% load static %}
+{% block content %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,100;0,200;0,300;0,400;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+      <title>My Donations</title>
+</head>
+{% load static %}
+<body class="vertical light">
+        <div class="row my-4">
+            <div class="col-md-12">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <!-- Heading and Search Bar in the Same Div -->
+                        <div class="search-container d-flex justify-content-between align-items-center mb-3">
+                            <h2 class="h4 mb-0">Track Beneficary</h2>
+                            <input type="text" id="search" class="form-control w-30 p-2" placeholder="Search Beneficiary...">
+                        </div>
+
+                        <!-- Table Container for Responsive Design -->
+                        <div class="table-responsive">
+                            <table class="table table-bordered  table-striped" id="donationTable">
+                                <thead class="bg-dark text-white text-center">
+                                    <tr>
+
+                                        <th> Name</th>
+                                        <th>Category</th>
+                                        <th>Beneficiary Requested Date</th>
+                                        <th>Status</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for i in track_details %}
+                                    <tr>
+                                        <td>{{i.username}}</td>
+                                        <td>{{i.category}}</td>
+                                        <td>{{i.request_date}}</td>
+                                        <td class="text-center">
+                {% if i.status == "Approved" %}
+                    <span class="badge badge-pill badge-success">Approved</span>
+                {% elif i.status == "Declined" %}
+                    <span class="badge badge-pill badge-danger">Declined</span>
+                {% else %}
+                    <span class="badge badge-pill badge-warning">Pending</span>
+                {% endif %}
+            </td>
+
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <nav aria-label="Table Paging" class="mb-0 text-muted">
+                            <ul class="pagination justify-content-end mb-0">
+                                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+</body>
+
+
+
+
+</html>
+{% endblock %}

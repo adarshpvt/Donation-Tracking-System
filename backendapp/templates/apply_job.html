@@ -1,0 +1,84 @@
+{% extends 'index.html' %}
+{% block content %}
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Apply for Job</title>
+
+<style>
+.card-title {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.form-group label {
+    font-weight: 500;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+@media (max-width: 991px) {
+    #sidebar {
+    position: fixed;
+    z-index: 1050;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="row">
+<div class="col-md-8 mb-12">
+    <div class="card shadow mb-4">
+    <div class="card-body">
+        <h4 class="card-title text-center font-weight-bold">Job Application</h4>
+
+        <form method="POST" action="{% url 'save_job_application' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="fullname">Full Name</label>
+            <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Enter Your Name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Enter Email Address" required>
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter Phone Number" required>
+        </div>
+
+        <div class="form-group">
+            <label for="position">Position Applied For</label>
+            <input type="text" class="form-control" id="position" name="position" placeholder="Enter Job Position" required>
+        </div>
+
+        <div class="form-group">
+            <label for="resume">Upload Resume (PDF only)</label>
+            <input type="file" class="form-control" id="resume" name="resume" accept=".pdf" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary d-block mx-auto" style="width: 150px; border-radius:5px;">Submit</button>
+        </form>
+    </div>
+    </div>
+</div>
+</div>
+
+</body>
+
+</html>
+{% endblock %}

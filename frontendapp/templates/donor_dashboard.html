@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donor Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="{% static 'css/donor.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="{% static 'images/d_logo.jpeg' %}" alt="Logo">
+                <h2>Donor Panel</h2>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="#"><i class="fas fa-hand-holding-heart"></i> Donation History</a></li>
+                    <li><a href="#"><i class="fas fa-calendar-alt"></i> Upcoming Events</a></li>
+                    <li><a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+            <header>
+                <h1>Welcome, {{ user.username }}</h1>
+            </header>
+
+            <!-- Statistics Section -->
+            <section class="stats">
+                <div class="stat-box">
+                    <i class="fas fa-donate"></i>
+                    <div>
+                        <h3>Total Donations</h3>
+                        <p>₹ {{ total_donations }}</p>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <h3>Successful Donations</h3>
+                        <p>{{ successful_donations }}</p>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <i class="fas fa-calendar"></i>
+                    <div>
+                        <h3>Upcoming Events</h3>
+                        <p>{{ upcoming_events }}</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Donation Form -->
+            <section class="donation-form">
+                <h2>Make a Donation</h2>
+                <form id="donationForm" method="POST" action="{% url 'make_donation' %}">
+                    {% csrf_token %}
+                    
+                    <label for="amount">Donation Amount (₹):</label>
+                    <input type="number" id="amount" name="amount" required min="1" step="0.01">
+
+                    <label for="donation_type">Donation Type:</label>
+                    <select id="donation_type" name="donation_type" required>
+                        <option value="Money">Money</option>
+                        <option value="Clothes">Clothes</option>
+                        <option value="Food">Food</option>
+                        <option value="Medical Supplies">Medical Supplies</option>
+                    </select>
+
+                    <button type="submit">Donate</button>
+                </form>
+            </section>
+            
+            <!-- Recent Donations -->
+            <section class="recent-donations">
+                <h2>Recent Donations</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Receipt</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for donation in donations %}
+                        <tr>
+                            <td>{{ donation.date|date:"Y-m-d H:i:s" }}</td>
+                            <td>₹ {{ donation.amount }}</td>
+                            <td>{{ donation.donation_type }}</td>
+                            <td class="{% if donation.status == 'Approved' %}success{% else %}pending{% endif %}">
+                                {{ donation.status }}
+                            </td>
+                            <td>
+                                {% if donation.status == "Success" and donation.receipt %}
+                                <a href="{{ donation.receipt.url }}" download>Download Receipt</a>
+                                {% else %}
+                                <span>No Receipt Available</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5">No recent donations</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Logout Confirmation
+        document.getElementById("logout").addEventListener("click", function(event) {
+            event.preventDefault(); 
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You will be logged out!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, Logout"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "{% url 'logout' %}"; 
+                }
+            });
+        });
+
+        // Prevent negative donation amount
+        document.getElementById("donationForm").addEventListener("submit", function(event) {
+            let amountInput = document.getElementById("amount");
+            if (amountInput.value <= 0) {
+                Swal.fire("Error", "Donation amount must be greater than zero!", "error");
+                event.preventDefault(); 
+            }
+        });
+    </script>
+
+</body>
+</html>

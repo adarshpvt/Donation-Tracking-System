@@ -1,0 +1,235 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<html lang="en">
+  <head>
+    <title>Welfare - Free Bootstrap 4 Template by Colorlib</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  </head>
+  <body>
+
+   <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'main_page' %}">
+            GiveTrack
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav"
+            aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="ftco-nav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item "><a href="{% url 'main_page' %}" class="nav-link">Home</a></li>
+
+                {% if request.session.user_id %}
+                    <!-- Services Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" id="servicesDropdown" role="button" data-toggle="dropdown">
+                            Services
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="servicesDropdown">
+                            <a class="dropdown-item" href="{% url 'donation' %}">Donar</a>
+                            <a class="dropdown-item" href="{% url 'beneficiary' %}">Beneficiary</a>
+                            <a class="dropdown-item" href="{% url 'blood' %}">Blood Donar</a>
+                        </div>
+                    </li>
+                {% endif %}
+
+                <li class="nav-item"><a href="{% url 'about' %}" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="{% url 'blog' %}" class="nav-link">Blog</a></li>
+                <li class="nav-item active"><a href="{% url 'events' %}" class="nav-link">Events</a></li>
+                <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
+
+                {% if request.session.user_id %}
+                    <!-- User Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" id="userDropdown" role="button" data-toggle="dropdown">
+                            <i class="fas fa-user"></i> Welcome, {{ request.session.username }}
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="userDropdown">
+                            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                            <a class="dropdown-item" href="{% url 'mydonations' %}">My Dashboard</a>
+                        </div>
+                    </li>
+                {% else %}
+                    <!-- Login Link -->
+                    <li class="nav-item">
+                        <a href="{% url 'login_form' %}" class="nav-link">
+                            <i class="fas fa-user"></i> Login
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+    <!-- END nav -->
+
+    <div class="hero-wrap" style="background-image: url({% static 'images/bg_1.jpg' %});" data-stellar-background-ratio="0.5">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center" data-scrollax-parent="true">
+          <div class="col-md-7 ftco-animate text-center" data-scrollax=" properties: { translateY: '70%' }">
+             <p class="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span class="mr-2"><a href="index.html">Home</a></span> <span>Event</span></p>
+            <h1 class="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Events</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+   <section class="ftco-section">
+  <div class="container">
+    <div class="row">
+      <!-- 1. Child Education Support Event -->
+      <div class="col-md-4 d-flex ftco-animate">
+        <div class="blog-entry align-self-stretch">
+          <!-- Replace 'education-event.jpg' with your actual image -->
+          <a href="blog-single.html" class="block-20" style="background-image: url({% static 'images/school.jpg' %});">
+          </a>
+          <div class="text p-4 d-block">
+            <div class="meta mb-3">
+              <div><a href="#">Aug. 12, 2025</a></div>
+
+            </div>
+            <h3 class="heading mb-4"><a href="#">Back-to-School Drive</a></h3>
+            <p class="time-loc">
+              <span class="mr-2"><i class="icon-clock-o"></i> 09:00AM - 02:00PM</span>
+              <span><i class="icon-map-o"></i> City Hall, Main Auditorium</span>
+            </p>
+            <p>Help underprivileged children receive essential school supplies and educational support to start the year strong.</p>
+            <p><a href="event.html">Join Event <i class="ion-ios-arrow-forward"></i></a></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Patient Treatment Assistance Event -->
+      <div class="col-md-4 d-flex ftco-animate">
+        <div class="blog-entry align-self-stretch">
+          <!-- Replace 'health-event.jpg' with your actual image -->
+          <a href="blog-single.html" class="block-20" style="background-image: url({% static 'images/marathon.jpg' %});">
+          </a>
+          <div class="text p-4 d-block">
+            <div class="meta mb-3">
+              <div><a href="#">Aug. 15, 2025</a></div>
+
+            </div>
+            <h3 class="heading mb-4"><a href="#">Healthcare Assistance Marathon</a></h3>
+            <p class="time-loc">
+              <span class="mr-2"><i class="icon-clock-o"></i> 10:00AM - 04:00PM</span>
+              <span><i class="icon-map-o"></i> Green Park Community Center</span>
+            </p>
+            <p>Raise funds and awareness for patients in need of critical medical treatments and financial assistance.</p>
+            <p><a href="event.html">Join Event <i class="ion-ios-arrow-forward"></i></a></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Product Purchase Management Event -->
+      <div class="col-md-4 d-flex ftco-animate">
+        <div class="blog-entry align-self-stretch">
+          <!-- Replace 'product-event.jpg' with your actual image -->
+          <a href="blog-single.html" class="block-20" style="background-image: url({% static 'images/charity.jpg' %});">
+          </a>
+          <div class="text p-4 d-block">
+            <div class="meta mb-3">
+              <div><a href="#">Aug. 20, 2025</a></div>
+
+            </div>
+            <h3 class="heading mb-4"><a href="#">Charity Bazaar</a></h3>
+            <p class="time-loc">
+              <span class="mr-2"><i class="icon-clock-o"></i> 11:00AM - 05:00PM</span>
+              <span><i class="icon-map-o"></i> Downtown Market Square</span>
+            </p>
+            <p>Shop for handmade products and essentials; proceeds go toward managing and distributing goods to those in need.</p>
+            <p><a href="event.html">Join Event <i class="ion-ios-arrow-forward"></i></a></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Blood Donation Tracking Event -->
+      <div class="col-md-4 d-flex ftco-animate">
+        <div class="blog-entry align-self-stretch">
+          <!-- Replace 'blood-event.jpg' with your actual image -->
+          <a href="blog-single.html" class="block-20" style="background-image: url({% static 'images/blood doantion.jpg' %});">
+          </a>
+          <div class="text p-4 d-block">
+            <div class="meta mb-3">
+              <div><a href="#">Aug. 25, 2025</a></div>
+
+            </div>
+            <h3 class="heading mb-4"><a href="#">Blood Donation Camp</a></h3>
+            <p class="time-loc">
+              <span class="mr-2"><i class="icon-clock-o"></i> 09:00AM - 02:00PM</span>
+              <span><i class="icon-map-o"></i> Red Cross Hall</span>
+            </p>
+            <p>Donate blood and help maintain a stable supply for hospitals. Track your donations and see the impact you make.</p>
+            <p><a href="event.html">Join Event <i class="ion-ios-arrow-forward"></i></a></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Old Age Home Support Event -->
+      <div class="col-md-4 d-flex ftco-animate">
+        <div class="blog-entry align-self-stretch">
+          <!-- Replace 'elderly-event.jpg' with your actual image -->
+          <a href="blog-single.html" class="block-20" style="background-image: url({% static 'images/senior care.jpg' %});">
+          </a>
+          <div class="text p-4 d-block">
+            <div class="meta mb-3">
+              <div><a href="#">Aug. 28, 2025</a></div>
+
+            </div>
+            <h3 class="heading mb-4"><a href="#">Senior Care Drive</a></h3>
+            <p class="time-loc">
+              <span class="mr-2"><i class="icon-clock-o"></i> 10:00AM - 03:00PM</span>
+              <span><i class="icon-map-o"></i> Golden Years Residence</span>
+            </p>
+            <p>Spend time with elderly residents, donate essential items, and learn how to better support our senior community.</p>
+            <p><a href="event.html">Join Event <i class="ion-ios-arrow-forward"></i></a></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Employment Opportunities Event -->
+      <div class="col-md-4 d-flex ftco-animate">
+        <div class="blog-entry align-self-stretch">
+          <!-- Replace 'employment-event.jpg' with your actual image -->
+          <a href="blog-single.html" class="block-20" style="background-image: url({% static 'images/job fair.jpg' %});">
+          </a>
+          <div class="text p-4 d-block">
+            <div class="meta mb-3">
+              <div><a href="#">Aug. 30, 2025</a></div>
+
+            </div>
+            <h3 class="heading mb-4"><a href="#">Job Fair for a Cause</a></h3>
+            <p class="time-loc">
+              <span class="mr-2"><i class="icon-clock-o"></i> 09:30AM - 03:30PM</span>
+              <span><i class="icon-map-o"></i> Community Resource Center</span>
+            </p>
+            <p>Connect with organizations offering meaningful employment opportunities, and learn how you can support their mission.</p>
+            <p><a href="event.html">Join Event <i class="ion-ios-arrow-forward"></i></a></p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+
+
+
+
+  <!-- loader -->
+
+
+
+  </body>
+</html>
+{% endblock %}

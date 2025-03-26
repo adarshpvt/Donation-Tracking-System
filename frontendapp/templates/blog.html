@@ -1,0 +1,203 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<html lang="en">
+  <head>
+    <title>Welfare - Free Bootstrap 4 Template by Colorlib</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  </head>
+  <body>
+
+
+
+   <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'main_page' %}">
+            GiveTrack
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav"
+            aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="ftco-nav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item "><a href="{% url 'main_page' %}" class="nav-link">Home</a></li>
+
+                {% if request.session.user_id %}
+                    <!-- Services Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" id="servicesDropdown" role="button" data-toggle="dropdown">
+                            Services
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="servicesDropdown">
+                            <a class="dropdown-item" href="{% url 'donation' %}">Donar</a>
+                            <a class="dropdown-item" href="{% url 'beneficiary' %}">Beneficiary</a>
+                            <a class="dropdown-item" href="{% url 'blood' %}">Blood Donar</a>
+                        </div>
+                    </li>
+                {% endif %}
+
+                <li class="nav-item"><a href="{% url 'about' %}" class="nav-link">About</a></li>
+                <li class="nav-item active"><a href="{% url 'blog' %}" class="nav-link">Blog</a></li>
+                <li class="nav-item"><a href="{% url 'events' %}" class="nav-link">Events</a></li>
+                <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
+
+                {% if request.session.user_id %}
+                    <!-- User Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" id="userDropdown" role="button" data-toggle="dropdown">
+                            <i class="fas fa-user"></i> Welcome, {{ request.session.username }}
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="userDropdown">
+                            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                            <a class="dropdown-item" href="{% url 'mydonations' %}">My Dashboard</a>
+                        </div>
+                    </li>
+                {% else %}
+                    <!-- Login Link -->
+                    <li class="nav-item">
+                        <a href="{% url 'login_form' %}" class="nav-link">
+                            <i class="fas fa-user"></i> Login
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+    <div class="hero-wrap" style="background-image: url({% static 'images/bg_2.jpg' %});" data-stellar-background-ratio="0.5">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center" data-scrollax-parent="true">
+          <div class="col-md-7 ftco-animate text-center" data-scrollax=" properties: { translateY: '70%' }">
+             <p class="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span class="mr-2"><a href="index.html">Home</a></span> <span>Blog</span></p>
+            <h1 class="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Blog</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  <section class="ftco-section">
+  <div class="container">
+    <div class="row d-flex">
+
+      <!-- 1. Child Education Support Event -->
+      <div class="col-md-4 d-flex ftco-animate">
+      	<div class="blog-entry align-self-stretch">
+          <a href="blog-single.html" class="block-20" style="background-image: url({% static 'images/sch.jpg' %});">
+          </a>
+          <div class="text p-4 d-block">
+          	<div class="meta mb-3">
+              <div><a href="#">Sept 12, 2025</a></div>
+              <div><a href="#">Admin</a></div>
+              <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 5</a></div>
+            </div>
+            <h3 class="heading mt-3"><a href="#">Empowering Young Minds: Back-to-School Drive</a></h3>
+            <p>Join us in providing essential school supplies and educational resources to underprivileged children, paving the way for a brighter future.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Patient Treatment Assistance Event -->
+      <div class="col-md-4 d-flex ftco-animate">
+      	<div class="blog-entry align-self-stretch">
+          <a href="blog-single.html" class="block-20" style="background-image: url({% static 'images/asis.jpg' %});">
+          </a>
+          <div class="text p-4 d-block">
+          	<div class="meta mb-3">
+              <div><a href="#">Sept 15, 2025</a></div>
+              <div><a href="#">Admin</a></div>
+              <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 8</a></div>
+            </div>
+            <h3 class="heading mt-3"><a href="#">Healing Together: Community Health Fair</a></h3>
+            <p>Support our mission to provide critical treatment and care. Every donation helps fund patient treatment initiatives and offers hope to those in need.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Product Purchase Management Event -->
+      <div class="col-md-4 d-flex ftco-animate">
+      	<div class="blog-entry align-self-stretch">
+          <a href="blog-single.html" class="block-20" style="background-image: url({% static 'images/char.jpg' %});">
+          </a>
+          <div class="text p-4 d-block">
+          	<div class="meta mb-3">
+              <div><a href="#">Sept 18, 2025</a></div>
+              <div><a href="#">Admin</a></div>
+              <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 6</a></div>
+            </div>
+            <h3 class="heading mt-3"><a href="#">Charity Bazaar: Goods for a Cause</a></h3>
+            <p>Discover unique products at our charity bazaar, where every purchase contributes to the management and distribution of essential supplies.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Blood Donation Tracking Event -->
+      <div class="col-md-4 d-flex ftco-animate">
+      	<div class="blog-entry align-self-stretch">
+          <a href="blog-single.html" class="block-20" style="background-image: url({% static 'images/blood.jpg' %});">
+          </a>
+          <div class="text p-4 d-block">
+          	<div class="meta mb-3">
+              <div><a href="#">Sept 20, 2025</a></div>
+              <div><a href="#">Admin</a></div>
+              <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 4</a></div>
+            </div>
+            <h3 class="heading mt-3"><a href="#">Life-Saving Drops: Blood Donation Camp</a></h3>
+            <p>Your blood donation can save lives. Help us track every contribution to maintain a stable supply for hospitals and patients in need.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Old Age Home Support Event -->
+      <div class="col-md-4 d-flex ftco-animate">
+      	<div class="blog-entry align-self-stretch">
+          <a href="blog-single.html" class="block-20" style="background-image: url({% static 'images/health.jpg' %});">
+          </a>
+          <div class="text p-4 d-block">
+          	<div class="meta mb-3">
+              <div><a href="#">Sept 22, 2025</a></div>
+              <div><a href="#">Admin</a></div>
+              <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 2</a></div>
+            </div>
+            <h3 class="heading mt-3"><a href="#">Golden Years Initiative: Senior Care Drive</a></h3>
+            <p>Help us ensure a dignified life for our seniors by supporting old age homes with essential supplies and compassionate care.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Employment Opportunities Event -->
+      <div class="col-md-4 d-flex ftco-animate">
+      	<div class="blog-entry align-self-stretch">
+          <a href="blog-single.html" class="block-20" style="background-image: url({% static 'images/jobs.jpg' %});">
+          </a>
+          <div class="text p-4 d-block">
+          	<div class="meta mb-3">
+              <div><a href="#">Sept 25, 2025</a></div>
+              <div><a href="#">Admin</a></div>
+              <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 7</a></div>
+            </div>
+            <h3 class="heading mt-3"><a href="#">Empowering Communities: Job Fair for a Cause</a></h3>
+            <p>Discover sustainable employment opportunities and skill development programs designed to empower individuals and strengthen communities.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+  <!-- loader -->
+
+
+
+  </body>
+</html>
+{% endblock %}
