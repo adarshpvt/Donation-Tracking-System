@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+{% extends 'index.html' %}
+{% block content %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Edit Organ Donor</title>
+    <style>
+        .card-title { font-weight: bold; font-size: 1.5rem; }
+        .form-group label { font-weight: 500; }
+        .btn-primary { background-color: #f0ad4e; border: none; }
+        .btn-primary:hover { background-color: #ec971f; }
+        @media (max-width: 991px) { #sidebar { position: fixed; z-index: 1050; } }
+    </style>
+</head>
+<body>
+<div class="row">
+    <div class="col-md-8 mb-12">
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <h4 class="card-title text-center font-weight-bold">Edit Organ Donor Details</h4>
+
+                <form method="POST" action="{% url 'edit_organ_donor' donor.id %}">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label for="full_name">Full Name</label>
+                        <input type="text" class="form-control" id="full_name" name="full_name" value="{{ donor.full_name }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dob">Date of Birth</label>
+                        <input type="date" class="form-control" id="dob" name="dob" value="{{ donor.dob|date:'Y-m-d' }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ donor.email }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" value="{{ donor.phone }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="emergency_contact">Emergency Contact</label>
+                        <input type="tel" class="form-control" id="emergency_contact" name="emergency_contact" value="{{ donor.emergency_contact }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <textarea class="form-control" id="address" name="address" required>{{ donor.address }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" class="form-control" id="city" name="city" value="{{ donor.city }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="state">State</label>
+                        <input type="text" class="form-control" id="state" name="state" value="{{ donor.state }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="country">Country</label>
+                        <input type="text" class="form-control" id="country" name="country" value="{{ donor.country }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <select class="form-control" name="gender" required>
+                            <option value="Male" {% if donor.gender == "Male" %}selected{% endif %}>Male</option>
+                            <option value="Female" {% if donor.gender == "Female" %}selected{% endif %}>Female</option>
+                            <option value="Other" {% if donor.gender == "Other" %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+
+                   <div class="form-group">
+    <label for="blood_group">Blood Group</label>
+    <select class="form-control" id="blood_group" name="blood_group" required>
+        <option value="">-- Select Blood Group --</option>
+        <option value="A+" {% if donor.blood_group == "A+" %}selected{% endif %}>A+</option>
+        <option value="A-" {% if donor.blood_group == "A-" %}selected{% endif %}>A-</option>
+        <option value="B+" {% if donor.blood_group == "B+" %}selected{% endif %}>B+</option>
+        <option value="B-" {% if donor.blood_group == "B-" %}selected{% endif %}>B-</option>
+        <option value="O+" {% if donor.blood_group == "O+" %}selected{% endif %}>O+</option>
+        <option value="O-" {% if donor.blood_group == "O-" %}selected{% endif %}>O-</option>
+        <option value="AB+" {% if donor.blood_group == "AB+" %}selected{% endif %}>AB+</option>
+        <option value="AB-" {% if donor.blood_group == "AB-" %}selected{% endif %}>AB-</option>
+    </select>
+</div>
+
+
+                    <div class="form-group">
+                        <label for="weight">Weight (kg)</label>
+                        <input type="number" class="form-control" id="weight" name="weight" value="{{ donor.weight }}" required>
+                    </div>
+
+                    <div class="form-group">
+    <label>Organs to Donate</label>
+    <div class="btn-group-toggle" data-toggle="buttons">
+        {% for organ in organs %}
+            <label class="btn btn-outline-primary m-1 {% if organ.id in selected_organs %}active{% endif %}">
+                <input type="checkbox" name="organs" value="{{ organ.id }}" {% if organ.id in selected_organs %}checked{% endif %}> {{ organ.name }}
+            </label>
+        {% endfor %}
+    </div>
+</div>
+
+
+                    <div class="form-group">
+                        <label>Do you have any chronic diseases?</label>
+                        <select class="form-control" name="chronic_disease">
+                            <option value="Yes" {% if donor.chronic_disease %}selected{% endif %}>Yes</option>
+                            <option value="No" {% if not donor.chronic_disease %}selected{% endif %}>No</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Have you had any major surgery in the past?</label>
+                        <select class="form-control" name="surgery">
+                            <option value="Yes" {% if donor.surgery %}selected{% endif %}>Yes</option>
+                            <option value="No" {% if not donor.surgery %}selected{% endif %}>No</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Are you currently taking any medications?</label>
+                        <select class="form-control" name="medications">
+                            <option value="Yes" {% if donor.medications %}selected{% endif %}>Yes</option>
+                            <option value="No" {% if not donor.medications %}selected{% endif %}>No</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary d-block mx-auto" style="width: 150px; border-radius:5px;">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+{% endblock %}

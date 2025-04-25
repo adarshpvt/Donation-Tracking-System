@@ -1,6 +1,5 @@
 {% extends 'main.html' %}
 {% load static %}
-<!-- Custom CSS for Enhanced Input Fields -->
 <style>
     .form-control:focus {
         border-color: #dc3545 !important;
@@ -17,8 +16,16 @@
         background-color: #b71c1c !important;
         box-shadow: 0 0 15px rgba(183, 28, 28, 0.6) !important;
     }
-</style>
 
+    #donorSearch {
+        background: #ffffff;
+        border: 1px solid rgba(220, 53, 69, 0.2);
+        box-shadow: 0px 5px 15px rgba(220, 53, 69, 0.1);
+        display: none;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+    }
+</style>
 {% block content %}
     <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
         <div class="container">
@@ -38,6 +45,7 @@
                                 <a class="dropdown-item" href="{% url 'donation' %}">Donar</a>
                                 <a class="dropdown-item" href="{% url 'beneficiary' %}">Beneficiary</a>
                                 <a class="dropdown-item" href="{% url 'blood' %}">Blood Donar</a>
+                                <a class="dropdown-item" href="{% url 'organ' %}">Organ Donation</a>
                             </div>
                         </li>
                     {% endif %}
@@ -102,7 +110,7 @@
                     <div class="text">
                         <h3 class="mb-4">Donate Blood</h3>
                         <p>Your blood donation can save lives. Become a donor today!</p>
-                        <p><a  href="{% url 'blood_re' %}" class="btn btn-white px-3 py-2 mt-2">Donate Blood</a></p>
+                        <p><a href="{% url 'blood_re' %}" class="btn btn-white px-3 py-2 mt-2">Donate Blood</a></p>
                     </div>
                 </div>
             </div>
@@ -111,126 +119,102 @@
                     <div class="text">
                         <h3 class="mb-4">Find a Donor</h3>
                         <p>Looking for a blood donor? Search for available donors near you.</p>
-                        <p><button id="findDonorBtn"  class="btn btn-white px-3 py-2 mt-2">Find a Donor</button></p>
+                        <p><button id="findDonorBtn" class="btn btn-white px-3 py-2 mt-2">Find a Donor</button></p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
-<div id="donorSearch" class="container mt-4 p-4 rounded-4 shadow bg-white" style="display: none; max-width: 720px;">
+   <!-- Add this button somewhere in your page -->
+
+<div id="donorSearch" class="container mt-4 p-4 rounded-4 shadow bg-white d-none" style="max-width: 720px;">
     <h3 class="text-center text-danger mb-3 fw-bold text-uppercase"> Find a Blood Donor</h3>
-
-<form id="donorSearchForm" method="post">
-    {% csrf_token %}
-    <div class="d-flex flex-wrap gap-2 align-items-center">
-        <!-- Blood Group Selection -->
-        <div class="flex-grow-1">
-            <label class="form-label fw-semibold text-muted small">Blood Group</label>
-            <select class="form-select form-select-sm border-danger shadow-sm rounded-3" name="blood_group" id="bloodGroup" required>
-                <option value="">Select</option>
-                <option value="A+">A+</option>
-                <option value="A-">A-</option>
-                <option value="B+">B+</option>
-                <option value="B-">B-</option>
-                <option value="O+">O+</option>
-                <option value="O-">O-</option>
-                <option value="AB+">AB+</option>
-                <option value="AB-">AB-</option>
-            </select>
+    <form id="donorSearchForm" method="post">
+        {% csrf_token %}
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <div class="flex-grow-1">
+                <label class="form-label fw-semibold text-muted small">Blood Group</label>
+                <select class="form-select form-select-sm border-danger shadow-sm rounded-3" name="blood_group" id="bloodGroup" required>
+                    <option value="">Select</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                </select>
+            </div>
+            <div class="flex-grow-1">
+                <label class="form-label fw-semibold text-muted small">City</label>
+                <input type="text" class="form-select form-select-sm border-danger shadow-sm rounded-3"
+                       name="city" id="location" placeholder="Enter city" required>
+            </div>
+            <div class="flex-grow-1">
+                <button type="submit" class="btn btn-danger btn-sm fw-bold rounded-pill shadow-sm"> Search </button>
+            </div>
         </div>
-
-        <!-- Location Input -->
-        <div class="flex-grow-1">
-            <label class="form-label fw-semibold text-muted small">Location</label>
-            <input type="text" class="form-select form-select-sm border-danger shadow-sm rounded-3"
-                   name="location" id="location" placeholder="Enter location" required>
-        </div>
-
-        <!-- Search Button -->
-        <div class="flex-grow-1">
-            <button type="submit" class="btn btn-danger btn-sm  fw-bold rounded-pill shadow-sm">
-                 Search
-            </button>
-        </div>
-
-    </div>
-</form>
-
-    <!-- Results Section -->
+    </form>
     <div id="donorResults" class="mt-4 p-3 bg-light shadow-sm rounded-3"></div>
 </div>
 
-<style>
-    /* Modern Styling */
-    #donorSearch {
-        background: #ffffff;
-        border: 1px solid rgba(220, 53, 69, 0.2);
-        box-shadow: 0px 5px 15px rgba(220, 53, 69, 0.1);
-    }
-    select, input {
-        transition: all 0.3s ease-in-out;
-    }
-    select:hover, input:hover, select:focus, input:focus {
-        border-color: #dc3545;
-        box-shadow: 0px 0px 8px rgba(220, 53, 69, 0.2);
-    }
-    button:hover {
-        background: #c82333;
-        transform: scale(1.05);
-        transition: 0.2s ease-in-out;
-    }
-</style>
-<script>document.addEventListener("DOMContentLoaded", function () {
-    const donorButton = document.getElementById("findDonorBtn");
-    const donorSearchDiv = document.getElementById("donorSearch");
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const donorButton = document.getElementById("findDonorBtn");
+        const donorSearchDiv = document.getElementById("donorSearch");
 
-    // Show/hide donor search section
-    donorButton.addEventListener("click", function (event) {
-        event.preventDefault();
-        donorSearchDiv.style.display = donorSearchDiv.style.display === "none" ? "block" : "none";
-    });
+        if (donorButton) {
+            donorButton.addEventListener("click", function (event) {
+                event.preventDefault();
+                donorSearchDiv.classList.toggle("d-none"); // Proper toggle function
+            });
+        }
 
-    // Handle Donor Search Form Submission
-    document.getElementById("donorSearchForm").addEventListener("submit", function (event) {
-        event.preventDefault();
+        document.getElementById("donorSearchForm").addEventListener("submit", function (event) {
+            event.preventDefault();
 
-        const bloodGroup = document.getElementById("bloodGroup").value;
-        const location = document.getElementById("location").value;
-        const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+            const bloodGroup = document.getElementById("bloodGroup").value;
+            const city = document.getElementById("location").value;
+            const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
 
-        fetch("{% url 'search_donors' %}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": csrfToken
-            },
-            body: JSON.stringify({ blood_group: bloodGroup, location: location })
-        })
-        .then(response => response.json())
-        .then(data => {
-            let resultHTML = `<h5 class='text-danger fw-bold'>🔴 Available Donors</h5>`;
-            if (data.length === 0) {
-                resultHTML += `<p class='text-muted'>No donors found for the selected criteria.</p>`;
-            } else {
-                resultHTML += "<ul class='list-group'>";
-                data.forEach(donor => {
-                    resultHTML += `<li class='list-group-item'>
-                        <strong>Name:</strong> ${donor.full_name}<br>
-                        <strong>Blood Group:</strong> ${donor.blood_group}<br>
-                        <strong>Location:</strong> ${donor.location}<br>
-                        <strong>Contact:</strong> ${donor.mobile}
-                    </li>`;
-                });
-                resultHTML += "</ul>";
-            }
-            document.getElementById("donorResults").innerHTML = resultHTML;
-        })
-        .catch(error => {
-            console.error("Error fetching donors:", error);
-            document.getElementById("donorResults").innerHTML = `<p class='text-danger'>⚠️ Unable to fetch donor data. Please try again.</p>`;
+            fetch("{% url 'search_donors' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken
+                },
+                body: JSON.stringify({ blood_group: bloodGroup, city: city }) // Updated key name
+            })
+            .then(response => response.json())
+            .then(data => {
+                let resultHTML = `<h5 class='text-danger fw-bold'>🔴 Available Donors</h5>`;
+                if (data.length === 0) {
+                    resultHTML += `<p class='text-muted'>No donors found for the selected criteria.</p>`;
+                } else {
+                    resultHTML += "<ul class='list-group'>";
+                    data.forEach(donor => {
+                        resultHTML += `<li class='list-group-item'>
+                            <strong>Name:</strong> ${donor.full_name}<br>
+                    <strong>Blood Group:</strong> ${donor.blood_group}<br>
+                    <strong>Age:</strong> ${donor.age}<br> <!-- Added Age -->
+                    <strong>City:</strong> ${donor.city}<br>
+                    <strong>State:</strong> ${donor.state}<br> <!-- Added State -->
+                    <strong>Contact:</strong> ${donor.mobile}
+                        </li>`;
+                    });
+                    resultHTML += "</ul>";
+                }
+                document.getElementById("donorResults").innerHTML = resultHTML;
+            })
+            .catch(error => {
+                console.error("Error fetching donors:", error);
+                document.getElementById("donorResults").innerHTML = `<p class='text-danger'>⚠️ Unable to fetch donor data. Please try again.</p>`;
+            });
         });
     });
-});
 </script>
+
+
 {% endblock %}

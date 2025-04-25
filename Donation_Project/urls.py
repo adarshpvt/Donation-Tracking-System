@@ -24,7 +24,7 @@ from Donation_Project import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('donation/', include(backendapp.urls)),
-    path('frontend/', include(frontendapp.urls)),
+    path('', include(frontendapp.urls)),
 
 ]
 

@@ -32,5 +32,15 @@ urlpatterns=[
    path('datetime/', views.my_view, name='datetime_page'),
    path('login_view/',views.login_view, name='login_view'),
    path('login_page/',views.login_page, name='login_page'),
+   path('register-organ-donor/', views.register_organ_donor, name='register_organ_donor'),
+   path('view-organ-donors/', views.view_organ_donors, name='view_organ_donors'),
+   path('delete-organ-donor/<int:id>/', views.delete_organ_donor, name='delete_organ_donor'),
+   path("edit_organ_donor/<int:donor_id>/", views.edit_organ_donor, name="edit_organ_donor"),
+   path("save_volunteer/", views.save_volunteer, name="save_volunteer"),
+   path("volunteer_approval/", views.volunteer_approval, name="volunteer_approval"),
+path('edit_volunteer/<int:id>/', views.edit_volunteer, name='edit_volunteer'),
+    path('delete_volunteer/<int:id>/', views.delete_volunteer, name='delete_volunteer'),
+path('approve_volunteer/<int:id>/', views.approve_volunteer, name='approve_volunteer'),
+path('decline_volunteer/<int:id>/', views.decline_volunteer, name='decline_volunteer'),
 
 ]

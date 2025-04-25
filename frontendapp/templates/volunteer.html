@@ -10,170 +10,352 @@
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-  <style>
-    /* SECTION BACKGROUND */
-    .ftco-section-3 {
-      position: relative;
-      min-height: 100vh; /* Full viewport height */
-      background: url("{% static 'images/bg_3.jpg' %}") no-repeat center center/cover;
-    }
-    .ftco-section-3 .overlay {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.5); /* Dark overlay */
-      z-index: 1;
-    }
+<style>/* Navbar Styles */
+.navbar {
+    background-color: #333;
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 
-    /* CONTAINER: Center content with flexbox */
-    .ftco-section-3 .container {
-      position: relative;
-      z-index: 2; /* Above overlay */
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+/* Logo */
+.logo {
+    font-size: 24px;
+    color: #f7931e;
+    font-weight: bold;
+    text-decoration: none;
+}
 
-    /* MODAL-LIKE WRAPPER */
-    .volunteer-modal {
-      background: rgba(30, 30, 30, 0.5); /* Dark background with some transparency */
-      border-radius: 8px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-      padding: 2rem;
-      max-width: 900px; /* Adjust as needed */
-      width: 100%;
-      display: flex;
-      flex-wrap: wrap; /* Allows columns to wrap on smaller screens */
-      position: relative; /* So the close button can be positioned absolutely */
-    }
+/* Navigation Links */
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+.nav-links li {
+    position: relative;
+}
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 12px;
+    transition: all 0.3s ease;
+}
+.nav-links a:hover {
+    background-color: #f7931e;
+    border-radius: 5px;
+}
 
-    /* CLOSE BUTTON */
-    .close-btn {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      line-height: 1;
-      color: #fff; /* White color for visibility */
-    }
+/* Dropdown Styles */
+.dropdown {
+    position: relative;
+}
+.dropbtn {
+    cursor: pointer;
+    padding: 8px 12px;
+    color: white;
+    text-decoration: none;
+}
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #333;
+    min-width: 160px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    z-index: 10;
+}
+.dropdown-content a {
+    color: white;
+    padding: 12px 16px;
+    display: block;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+.dropdown-content a:hover {
+    background-color: #f7931e;
+}
+.dropdown:hover .dropdown-content {
+    display: block;
+}
 
-    /* IMAGE COLUMN */
-    .img.img-2 {
-      width: 100%;
-      min-height: 300px; /* Adjust as needed */
-      background-size: cover;
-      background-position: center;
-      border-radius: 6px;
-    }
+/* User Dropdown */
+.nav-item.dropdown {
+    position: relative;
+}
+.nav-item .dropdown-content {
+    right: 0;
+    left: auto;
+}
 
-    /* LEFT & RIGHT COLUMNS */
-    .col-md-6 {
-      flex: 1 1 300px; /* Allows each column to shrink/grow */
-      margin-bottom: 1rem; /* Space between columns on wrap */
-    }
+/* Logout/Login Button */
+.btn-logout {
+    background-color: #f44336;
+    padding: 8px 12px;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+.btn-logout:hover {
+    background-color: #d32f2f;
+}
 
-    /* VOLUNTEER FORM STYLES */
-    .volunter-form .form-group {
-      margin-bottom: 1rem;
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
     }
-    .form-control {
-      background-color: rgba(255, 255, 255, 0.9); /* Light background for inputs */
-      border: 1px solid #007bff; /* Vibrant border color */
-      color: #333; /* Dark text color */
+    .nav-links {
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+        padding: 10px 0;
     }
-    .form-control:focus {
-      border-color: #0056b3; /* Darker border on focus */
-      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Focus shadow */
+    .dropdown-content {
+        position: static;
+        width: 100%;
     }
-    .btn.btn-white {
-      background-color: #007bff; /* Vibrant button color */
-      color: #fff;
-      border: none;
-      transition: background-color 0.3s ease; /* Smooth transition */
-    }
-    .btn.btn-white:hover {
-      background-color: #0056b3; /* Darker button color on hover */
-      color: #fff;
-    }
+}
+</style>
 
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      .volunteer-modal {
-        padding: 1rem; /* Reduce padding on smaller screens */
-      }
-    }
-  </style>
+
+<style>/* Full Page Background */
+.ftco-section-3 {
+    position: relative;
+    min-height: 100vh;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6));
+}
+
+/* Dark Overlay */
+.overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+/* Center Content */
+.container {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Glassmorphism Form */
+.form-container {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Form Fields */
+.form-control {
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    transition: all 0.3s ease-in-out;
+}
+
+.form-control::placeholder {
+    color: #ddd;
+}
+
+/* Submit Button */
+.btn-submit {
+    background: linear-gradient(135deg, #ff6600, #ff4400);
+    color: white;
+    padding: 12px 25px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-submit:hover {
+    background: linear-gradient(135deg, #ff4400, #ff2200);
+    transform: scale(1.05);
+}
+
+/* Profile Image Preview */
+#imagePreview {
+    display: none;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-top: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Right Side Volunteer Image */
+.volunteer-image {
+    background: url("{% static 'images/bg_4.jpg' %}") no-repeat center/cover;
+    min-height: 500px;
+    border-radius: 15px;
+    position: relative;
+}
+
+/* Dark Gradient Overlay on Image */
+.volunteer-image::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+}
+
+
+
+
+}
+</style>
+
 </head>
 <body>
 
-  <nav class="navbar navbar-expand-lg  ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
-    <div class="container">
-      <a class="navbar-brand" href="index.html">Welfare</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="oi oi-menu"></span> Menu
-      </button>
+<nav class="navbar">
+    <!-- Logo Section -->
+    <a href="{% url 'main_page' %}" class="logo">GiveTrack</a>
 
-      <div class="collapse navbar-collapse" id="ftco-nav">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item "><a href="{% url 'main_page' %}" class="nav-link">Home</a></li>
-          <li class="nav-item "><a href="{% url 'about' %}" class="nav-link">About</a></li>
-          <li class="nav-item"><a href="{% url 'blog' %}" class="nav-link">Blog</a></li>
-          <li class="nav-item active"><a href="{% url 'events' %}" class="nav-link">Events</a></li>
-          <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
-          <li class="nav-item">
-                    <a href="" class="nav-link">
-                        <i class="fas fa-user"></i> <!-- Login icon -->
-                    </a>
-                </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-
-<section class="ftco-section-3 img">
-  <div class="overlay"></div>
-  <div class="container">
-    <!-- MODAL-LIKE CONTAINER -->
-    <div class="volunteer-modal">
-      <!-- Close Button -->
-      <button class="close-btn" aria-label="Close" onclick="this.closest('.volunteer-modal').style.display='none';">
-        &times;
-      </button>
-
-      <!-- LEFT COLUMN (Image) -->
-      <div class="col-md-6 d-flex ftco-animate">
-        <div class="img img-2 align-self-stretch" style="background-image: url({% static 'images/bg_4.jpg' %});">
+    <!-- Navigation Links -->
+    <ul class="nav-links">
+      <li><a href="{% url 'main_page' %}">Home</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropbtn">Services</a>
+        <div class="dropdown-content">
+          <a href="{% url 'donation' %}">Donar</a>
+          <a href="{% url 'beneficiary' %}">Beneficiary</a>
+          <a href="{% url 'blood' %}">Blood Donar</a>
         </div>
-      </div>
+      </li>
+      <li><a href="{% url 'about' %}">About Us</a></li>
+      <li><a href="{% url 'blog' %}">Blog</a></li>
+      <li><a href="{% url 'events' %}">Events</a></li>
+      <li><a href="{% url 'contact' %}">Contact</a></li>
 
-      <!-- RIGHT COLUMN (Form) -->
-      <div class="col-md-6 volunteer pl-md-5 ftco-animate">
+      {% if request.session.user_id %}
+                    <!-- User Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" id="userDropdown" role="button" data-toggle="dropdown">
+                            <i class="fas fa-user"></i> Welcome, {{ request.session.username }}
+                        </a>
+                        <div class="dropdown-content" aria-labelledby="userDropdown">
+                            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                            <a class="dropdown-item" href="{% url 'mydonations' %}">My Dashboard</a>
+                        </div>
+                    </li>
+                {% else %}
+                    <!-- Login Link -->
+                    <li class="nav-item">
+                        <a href="{% url 'login_form' %}" class="btn-logout">
+                            <i class="fas fa-user"></i> Login
+                        </a>
+                    </li>
+                {% endif %}
+
+
+      <!-- Logout Button -->
+
+    </ul>
+
+</nav>
+
+
+<!-- Volunteer Section -->
+<section class="ftco-section-3 img" style="background: url('{% static 'images/bg_3.jpg' %}') no-repeat center center/cover; min-height: 150vh; position: relative;">
+    <div class="overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5);"></div>
+    <div class="container d-flex align-items-center justify-content-center" style="min-height: 100vh; position: relative; z-index: 2;">
+        <div class="volunteer-modal d-flex flex-wrap p-4 rounded" style="background: rgba(0, 0, 0, 0.5); max-width: 900px; width: 100%;">
+
+
+    <!-- Form Column -->
+    <div class="col-md-6 d-flex flex-column justify-content-center form-container" style="min-height: 500px;">
         <h3 class="mb-3 text-white">Be a Volunteer</h3>
-        <form action="#" class="volunter-form">
-          <div class="form-group">
-            <input type="text" class="form-control" placeholder="Your Name" required>
-          </div>
-          <div class="form-group">
-            <input type="email" class="form-control" placeholder="Your Email" required>
-          </div>
-          <div class="form-group">
-            <textarea cols="30" rows="3" class="form-control" placeholder="Message" required></textarea>
-          </div>
-          <div class="form-group">
-            <input type="submit" value="Send Message" class="btn btn-white py-3 px-5">
-          </div>
+        <form  class="flex-fill d-flex flex-column justify-content-between"  method="POST" enctype="multipart/form-data" action="{% url 'volunteer_register' %}">
+         {% csrf_token %}
+            <div>
+                <div class="mb-2">
+                    <input type="text" id="name" class="form-control" placeholder="Your Name" required name="name">
+                </div>
+                <div class="mb-3">
+                    <input type="email" id="email" class="form-control" placeholder="Your Email" required name="email">
+                </div>
+                <div class="mb-3">
+                    <input type="text" id="address" class="form-control" placeholder="Address" required name="address">
+                </div>
+                <div class="mb-3">
+                    <input type="text" id="city" class="form-control" placeholder="City" required name="city">
+                </div>
+                <div class="mb-3">
+                    <input type="tel" id="phone" class="form-control" placeholder="Phone Number" pattern="\d{10}" required name="phone">
+                    <small class="text-white">Enter a valid 10-digit number.</small>
+                </div>
+                <div class="mb-3">
+                    <input type="file" id="profilePic" class="form-control" accept="image/*" name="profilePic">
+                    <img id="imagePreview" src="#" alt="Profile Preview" style="display: none; width: 80px; height: 80px; border-radius: 50%; margin-top: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);">
+                </div>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary w-100">Submit</button>
+            </div>
         </form>
-      </div>
     </div>
-  </div>
+
+    <!-- Image Column -->
+    <div class="col-md-6 p-0 d-flex align-items-center">
+        <div class="volunteer-image w-100 h-100" style="background: url('{% static 'images/bg_4.jpg' %}') no-repeat center/cover;  min-height: 500px;"></div>
+    </div>
+</div>
+
+        </div>
+    </div>
 </section>
 
+<!-- JavaScript -->
+<script>
+    document.getElementById('profilePic').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        const preview = document.getElementById('imagePreview');
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            }
+            reader.readAsDataURL(file);
+        } else {
+            preview.style.display = 'none';
+        }
+    });
+
+    document.getElementById('volunteerForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        alert('Volunteer Registered Successfully!');
+    });
+</script>
+
+{% endblock %}
 </body>
 </html>
-{% endblock %}

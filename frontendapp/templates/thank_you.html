@@ -1,0 +1,97 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - GiveTrack</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f2f2f2 url("{% static 'images/bg_3.jpg' %}") no-repeat center center/cover;
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            box-shadow: 0px 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .container h2 {
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+
+        .container p {
+            color: #555;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .details {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: left;
+            margin-bottom: 20px;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .details strong {
+            color: #f7931e;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #f7931e;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #e67e22;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <i class="fas fa-check-circle" style="font-size: 60px; color: #28a745;"></i>
+        <h2>Payment Successful!</h2>
+        <p>Thank you for your donation. Your generosity makes a difference!</p>
+
+        {% if last_payment %}
+            <div class="details">
+                <p><strong>Transaction ID:</strong> {{ last_payment.transaction_id }}</p>
+                <p><strong>Donated Amount:</strong> ₹{{ last_payment.amount }}</p>
+                <p><strong>Category:</strong> {{ last_payment.category }}</p>
+                <p><strong>Date & Time:</strong> {{ last_payment.payment_date }}</p>
+            </div>
+        {% else %}
+            <p>No recent payment details found.</p>
+        {% endif %}
+
+        <a href="{% url 'main_page' %}" class="btn">Go to Home</a>
+    </div>
+
+</body>
+</html>

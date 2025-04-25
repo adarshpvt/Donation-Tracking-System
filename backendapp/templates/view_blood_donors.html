@@ -4,98 +4,112 @@
 
 <style>
 body {
-background-color: #f8f9fa;
+    background-color: #f8f9fa;
 }
 
 .card-container {
-max-width: 95%;
-margin: auto;
+    max-width: 95%;
+    margin: auto;
 }
 
 .card {
-border: none;
-border-radius: 10px;
-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-padding: 20px;
-background-color: white;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    background-color: white;
 }
 
 .table-container {
-overflow-x: auto;
+    overflow-x: auto;
 }
 
 .dataTables_filter input {
-border: 1px solid #ccc;
-border-radius: 5px;
-padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
 }
 
 .custom-btn {
-background-color: #5454c4;
-color: white;
-border: none;
-padding: 8px 12px;
-border-radius: 5px;
-font-size: 14px;
-cursor: pointer;
-box-shadow: 0 4px 8px rgba(61, 61, 176, 0.5);
+    background-color: #5454c4;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(61, 61, 176, 0.5);
 }
 
 .delete-btn {
-background-color: #c45454;
-box-shadow: 0 4px 8px rgba(176, 61, 61, 0.5);
+    background-color: #c45454;
+    box-shadow: 0 4px 8px rgba(176, 61, 61, 0.5);
 }
 
 @media (max-width: 768px) {
-.custom-btn {
-    font-size: 12px;
-    padding: 6px 10px;
-}
+    .custom-btn {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
 }
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <div class="card-container">
-<div class="card">
-<h3 class="text-center mb-4">Blood Donors List</h3>
-<div class="table-container">
-    <table id="bloodDonorTable" class="table table-striped table-bordered display expandable-table">
-    <thead>
-        <tr>
-        <th>Donor Name</th>
-        <th>Blood Group</th>
-            <th>Phone Number</th>
-            <th>Location</th>
-        <th>Availability</th>
-        <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for i in blood_donors %}
-        <tr>
-            <td>{{ i.full_name }}</td>
-            <td>{{ i.blood_group }}</td>
-            <td>{{ i.mobile }}</td>
-            <td>{{ i.location }}</td>
-            <td>{{ i.availability }}</td>
-            <td>
-            <a href="#" class="custom-btn" title="Edit"
-                onclick="confirmEdit('{% url 'edit_blood_donor' i.id %}')">
-                <i class="fas fa-edit"></i>
-            </a>&nbsp;
+    <div class="card">
+        <h3 class="text-center mb-4">Blood Donors List</h3>
+        <div class="table-container">
+            <table id="bloodDonorTable" class="table table-striped table-bordered display expandable-table">
+                <thead>
+                    <tr>
+                        <th>Full Name</th>
+                        <th>Blood Group</th>
+                        <th>Phone Number</th>
+                        <th>Age</th>
+                        <th>State</th>
+                        <th>City</th>
+                        <th>Recent Donation</th>
+                        <th>Chronic Diseases</th>
+                        <th>Recent Procedure</th>
+                        <th>Pregnant/Breastfeeding</th>
+                        <th>Recent Vaccination</th>
+                        <th>Registered At</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in blood_donors %}
+                    <tr>
+                        <td>{{ i.full_name }}</td>
+                        <td>{{ i.blood_group }}</td>
+                        <td>{{ i.mobile }}</td>
+                        <td>{{ i.age }}</td>
+                        <td>{{ i.state }}</td>
+                        <td>{{ i.city }}</td>
+                        <td>{{ i.recent_donation }}</td>
+                        <td>{{ i.chronic_diseases }}</td>
+                        <td>{{ i.recent_procedure }}</td>
+                        <td>{{ i.pregnant_or_breastfeeding }}</td>
+                        <td>{{ i.recent_vaccination }}</td>
+                        <td>{{ i.registered_at|date:"d-m-Y H:i" }}</td>
+                        <td>
+                            <a href="#" class="custom-btn" title="Edit"
+                                onclick="confirmEdit('{% url 'edit_blood_donor' i.id %}')">
+                                <i class="fas fa-edit"></i>
+                            </a>&nbsp;
 
-            <a href="#" class="custom-btn delete-btn" title="Delete"
-                onclick="confirmDelete('{% url 'delete_blood_donor' i.id %}')">
-                <i class="fas fa-trash-alt"></i>
-            </a>&nbsp;
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-    </table>
-</div>
-</div>
+                            <a href="#" class="custom-btn delete-btn" title="Delete"
+                                onclick="confirmDelete('{% url 'delete_blood_donor' i.id %}')">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>&nbsp;
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <script src="{% static 'admin/vendors/js/vendor.bundle.base.js' %}"></script>
@@ -104,15 +118,15 @@ box-shadow: 0 4px 8px rgba(176, 61, 61, 0.5);
 
 <script>
 $(document).ready(function () {
-$('#bloodDonorTable').DataTable({
-    responsive: true,
-    paging: true,
-    searching: true,
-    ordering: true,
-    language: {
-    search: "Search Blood Donor:"
-    },
-});
+    $('#bloodDonorTable').DataTable({
+        responsive: true,
+        paging: true,
+        searching: true,
+        ordering: true,
+        language: {
+            search: "Search Blood Donor:"
+        },
+    });
 });
 
 function confirmEdit(editUrl) {

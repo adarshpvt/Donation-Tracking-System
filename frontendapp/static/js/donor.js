@@ -89,3 +89,15 @@ fetch('/api/donate/', {
     console.log("Donation Successful:", data);
 })
 .catch(error => console.error("Error:", error));
+$.ajax({
+    type: 'POST',
+    url: '/donate/',
+    data: {
+        name: name,
+        amount: amount
+        // Don't include csrfmiddlewaretoken here
+    },
+    success: function(response) {
+        // handle success
+    }
+});

@@ -36,6 +36,45 @@
         display: inline-block;
         box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
     }
+      .card {
+    transition: transform 0.3s ease-in-out;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.card-tale {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+}
+
+.card-dark-blue {
+    background: linear-gradient(135deg, #e8eaf6, #c5cae9);
+}
+
+.card-light-blue {
+    background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+}
+
+.card-light-danger {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.display-4 {
+    line-height: 1;
+}
+
+.bi {
+    font-size: 1.5rem;
+}
 </style>
 </head>
 <body>
@@ -320,6 +359,25 @@
                 </div>
             </li>
 
+            <li class="nav-item">
+    <a class="nav-link" data-bs-toggle="collapse" data-bs-target="#organDonation" aria-expanded="false" aria-controls="organDonation">
+        <i class="fa fa-heartbeat menu-icon"></i>
+        <span class="menu-title">Organ Donation</span>
+        <i class="fa fa-chevron-down menu-arrow"></i>
+    </a>
+    <div class="collapse" id="organDonation">
+        <ul class="nav flex-column ms-3">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'register_organ_donor' %}">Register as Donor</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'view_organ_donors' %}">View Donor Details</a>
+            </li>
+        </ul>
+    </div>
+</li>
+
+
             <!-- Products -->
             <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="collapse" href="#products" aria-expanded="false">
@@ -339,13 +397,14 @@
             <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="collapse" href="#employment" aria-expanded="false">
                     <i class="fa fa-briefcase menu-icon"></i>
-                    <span class="menu-title">Employment</span>
+                    <span class="menu-title">Volunteers</span>
                     <i class="fa fa-chevron-down menu-arrow"></i>
                 </a>
                 <div class="collapse" id="employment">
                     <ul class="nav flex-column ms-3">
-                        <li class="nav-item"><a class="nav-link" href="{% url 'view_jobs' %}">Job Listings</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'apply_job' %}">Apply for Job</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'view_jobs' %}">Volunteer Listings</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'apply_job' %}">Apply as Volunteer</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'volunteer_approval' %}"> Volunteer Approval</a></li>
                     </ul>
                 </div>
             </li>
@@ -378,61 +437,37 @@
             </div>
           </div>
 
-    <div class="row">
-        <!-- Total Donations -->
-        <div class="col-md-6 mb-4 stretch-card transparent">
-            <div class="card card-tale">
-                <div class="card-body">
-                    <p class="mb-4">Total Donations</p>
-                    <p class="fs-30 mb-2" id="totalDonations">{{total_donations}}</p>
-                    <p>Tracked by GiveTrack</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Total Requests -->
-<div class="col-md-6 mb-4 stretch-card transparent">
-    <div class="card card-dark-blue">
-        <div class="card-body">
-            <p class="mb-4">Total Requests</p>
-            <p class="fs-30 mb-2" id="totalRequests">{{ total_requests }}</p>
-            <p>People requesting donations</p>
-
-            <!-- Display requests by category -->
-            <ul class=" ">
-                {% for category, count in request_data.items %}
-
-            {{ category }} <span class="fw-bold">{{ count }}</span> <br>
-
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
-</div>
-    </div>
 <div class="row">
-    <!-- Total Available Donors -->
+    <!-- Total Donations -->
     <div class="col-md-6 mb-4 stretch-card transparent">
-        <div class="card card-light-blue">
-            <div class="card-body">
-                <p class="mb-4">Available Donors</p>
-                <p class="fs-30 mb-2" id="availableDonors">{{ total_donors }}</p>
-                <p>Across all blood groups</p>
+        <div class="card card-tale border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="bi bi-heart-fill text-danger me-2"></i>
+                    <p class="mb-0 text-muted">Total Donations</p>
+                </div>
+                <p class="display-4 mb-2 fw-bold text-primary" id="totalDonations">{{total_donations}}</p>
+                <p class="text-muted small">Tracked by GiveTrack</p>
             </div>
         </div>
     </div>
 
-    <!-- Blood Group-wise Donor Availability -->
-    <div class="col-md-6 stretch-card transparent">
-        <div class="card card-light-danger">
-            <div class="card-body">
-                <p class="mb-4">Blood Group Availability</p>
-                <ul class="list-unstyled mb-0">
-                    {% for blood_group, count in blood_group_data.items %}
-                        <li class="d-flex justify-content-between">
-                            <span>{{ blood_group }}:</span>
-                            <span class="fw-bold">{{ count }}</span>
-                        </li>
+    <!-- Total Requests -->
+    <div class="col-md-6 mb-4 stretch-card transparent">
+        <div class="card card-dark-blue border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="bi bi-person-raised-hand text-warning me-2"></i>
+                    <p class="mb-0 text-muted">Total Requests</p>
+                </div>
+                <p class="display-4 mb-2 fw-bold text-info" id="totalRequests">{{ total_requests }}</p>
+                <p class="text-muted small">People requesting donations</p>
+                <ul class="list-unstyled mt-3">
+                    {% for category, count in request_data.items %}
+                    <li class="d-flex justify-content-between py-1">
+                        <span class="text-muted">{{ category }}</span>
+                        <span class="fw-bold text-dark">{{ count }}</span>
+                    </li>
                     {% endfor %}
                 </ul>
             </div>
@@ -440,8 +475,41 @@
     </div>
 </div>
 
+<div class="row">
+    <!-- Total Available Donors -->
+    <div class="col-md-6 mb-4 stretch-card transparent">
+        <div class="card card-light-blue border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="bi bi-people-fill text-success me-2"></i>
+                    <p class="mb-0 text-muted">Available Donors</p>
+                </div>
+                <p class="display-4 mb-2 fw-bold text-success" id="availableDonors">{{ total_donors }}</p>
+                <p class="text-muted small">Across all blood groups</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Blood Group-wise Donor Availability -->
+    <div class="col-md-6 stretch-card transparent">
+        <div class="card card-light-danger border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="bi bi-droplet-fill text-danger me-2"></i>
+                    <p class="mb-0 text-muted">Blood Group Availability</p>
+                </div>
+                <ul class="list-unstyled mb-0">
+                    {% for blood_group, count in blood_group_data.items %}
+                    <li class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted">{{ blood_group }}</span>
+                        <span class="fw-bold text-dark">{{ count }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
-          </div>
           {% endblock %}
 
         </div>

@@ -3,7 +3,7 @@ from frontendapp import views
 
 
 urlpatterns = [
-    path('main_page/', views.main_page, name="main_page"),
+    path('', views.main_page, name="main_page"),
     path('about/', views.about, name="about"),
     path('volunteer/', views.volunteer, name="volunteer"),
     path('blog/', views.blog, name="blog"),
@@ -29,6 +29,13 @@ urlpatterns = [
     path('blood_re/', views.blood_re, name="blood_re"),
     path('save_blooddonor/', views.save_blooddonor, name="save_blooddonor"),
     path('search_donors/', views.search_donors, name="search_donors"),
+    path('create_razorpay_order/', views.create_razorpay_order, name="create_razorpay_order"),
+    path('payment_success/', views.payment_success, name="payment_success"),
+    path('payment_success/', views.payment_success, name="payment_success"),
+    path('thank_you/', views.thank_you, name="thank_you"),
+    path('organ/', views.organ, name="organ"),
+    path('submit_donor/', views.submit_donor, name="submit_donor"),
+    path('volunteer_register/', views.volunteer_register, name="volunteer_register"),
 ]
 
 

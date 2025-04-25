@@ -130,3 +130,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 CSRF_FAILURE_VIEW = "frontendapp.views.csrf_failure"
+
+
+RAZORPAY_KEY_ID = "rzp_test_QzIn7XrT0zJ9If"
+RAZORPAY_KEY_SECRET = "9jM71BiWU9CXbvXJd0IZSuTl"

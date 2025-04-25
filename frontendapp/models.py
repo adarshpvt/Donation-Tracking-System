@@ -142,7 +142,9 @@ class ServiceRequest(models.Model):
 
 from django.db import models
 
-class blood_module(models.Model):
+from django.db import models
+
+class BloodModule(models.Model):
     BLOOD_GROUPS = [
         ('A+', 'A+'), ('A-', 'A-'),
         ('B+', 'B+'), ('B-', 'B-'),
@@ -150,18 +152,100 @@ class blood_module(models.Model):
         ('AB+', 'AB+'), ('AB-', 'AB-'),
     ]
 
-    AVAILABILITY_CHOICES = [
+    YES_NO_CHOICES = [
         ('Yes', 'Yes'),
         ('No', 'No'),
     ]
 
     full_name = models.CharField(max_length=100)
     blood_group = models.CharField(max_length=3, choices=BLOOD_GROUPS)
-    mobile = models.IntegerField(unique=True)
-    location = models.CharField(max_length=100)
-    availability = models.CharField(max_length=3, choices=AVAILABILITY_CHOICES)
+    mobile = models.BigIntegerField(unique=True)  # Changed to BigIntegerField for larger phone numbers
+    age = models.PositiveIntegerField()  # Added for age field (18-65 range)
+    state = models.CharField(max_length=100)  # Added for state field
+    city = models.CharField(max_length=100)  # Added for nearby city (replacing location)
+    recent_donation = models.CharField(max_length=3, choices=YES_NO_CHOICES, default='No')  # 3 months
+    chronic_diseases = models.CharField(max_length=3, choices=YES_NO_CHOICES, default='No')
+    recent_procedure = models.CharField(max_length=3, choices=YES_NO_CHOICES, default='No')  # Surgery/Tattoo
+    pregnant_or_breastfeeding = models.CharField(max_length=3, choices=YES_NO_CHOICES, default='No')
+    recent_vaccination = models.CharField(max_length=3, choices=YES_NO_CHOICES, default='No')  # 4 weeks
     registered_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.full_name} ({self.blood_group})"
 
+    class Meta:
+        verbose_name = "Blood Donor"
+        verbose_name_plural = "Blood Donors"
+
+
+from django.db import models
+
+class Organ(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+
+
+
+
+
+
+
+
+class Organ_Donor(models.Model):
+    GENDER_CHOICES = [
+        ('Male', 'Male'),
+        ('Female', 'Female'),
+        ('Other', 'Other'),
+    ]
+
+    BLOOD_GROUP_CHOICES = [
+        ('A+', 'A+'), ('A-', 'A-'),
+        ('B+', 'B+'), ('B-', 'B-'),
+        ('AB+', 'AB+'), ('AB-', 'AB-'),
+        ('O+', 'O+'), ('O-', 'O-'),
+    ]
+
+    full_name = models.CharField(max_length=255)
+    dob = models.DateField()
+    email = models.EmailField(unique=True)
+    phone = models.CharField(max_length=15)
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
+    emergency_contact = models.CharField(max_length=15)
+    address = models.TextField()
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    country = models.CharField(max_length=100)
+    blood_group = models.CharField(max_length=3, choices=BLOOD_GROUP_CHOICES)
+    weight = models.PositiveIntegerField()
+
+    organs = models.ManyToManyField(Organ)  # ✅ Replace JSONField with ManyToManyField
+    chronic_disease = models.BooleanField()
+    chronic_details = models.TextField(blank=True, null=True)
+    surgery = models.BooleanField()
+    surgery_details = models.TextField(blank=True, null=True)
+    medications = models.BooleanField()
+    medications_details = models.TextField(blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.full_name
+
+from django.db import models
+
+class Volunteer(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    address = models.TextField()
+    city = models.CharField(max_length=50)
+    phone = models.CharField(max_length=10)
+    profile_pic = models.ImageField(upload_to='volunteer_pics/', blank=True, null=True)
+    is_approved = models.BooleanField(default=False)  # New field
+
+    def __str__(self):
+        return self.name

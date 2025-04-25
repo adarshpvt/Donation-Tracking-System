@@ -1,0 +1,467 @@
+{% extends 'main.html' %}
+{% load static %}
+
+<style>
+    .form-control:focus {
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 10px rgba(220, 53, 69, 0.4) !important;
+    }
+
+    select.form-control:hover,
+    input.form-control:hover {
+        transform: scale(1.02);
+        transition: 0.2s ease-in-out;
+    }
+
+    button.btn-danger:hover {
+        background-color: #b71c1c !important;
+        box-shadow: 0 0 15px rgba(183, 28, 28, 0.6) !important;
+    }
+
+    #donorSearch {
+        background: #ffffff;
+        border: 1px solid rgba(220, 53, 69, 0.2);
+        box-shadow: 0px 5px 15px rgba(220, 53, 69, 0.1);
+        display: none;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+    }
+
+    /* New Advanced Form Styles */
+    .advanced-donor-form {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        border-radius: 15px;
+        padding: 2.5rem;
+        box-shadow: 0 15px 40px rgba(220, 53, 69, 0.15);
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .form-section {
+        background: rgba(255, 255, 255, 0.8);
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-section:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .advanced-donor-form .form-control,
+    .advanced-donor-form .custom-select {
+        border-radius: 8px;
+        padding: 0.75rem;
+        transition: all 0.3s ease;
+    }
+
+    .custom-checkbox .custom-control-label::before {
+        border-radius: 4px;
+        border-color: #dc3545;
+    }
+
+    .custom-control-input:checked ~ .custom-control-label::before {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .submit-btn {
+        background: #dc3545;
+        border: none;
+        padding: 0.8rem 2.5rem;
+        border-radius: 30px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4);
+    }
+
+    .progress-bar {
+        background-color: #dc3545;
+        transition: width 0.3s ease;
+    }
+
+    .error-message {
+        color: #dc3545;
+        font-size: 0.9rem;
+        display: none;
+        margin-top: 0.25rem;
+    }
+
+    @media (max-width: 768px) {
+        .advanced-donor-form {
+            padding: 1.5rem;
+        }
+    }
+</style>
+
+{% block content %}
+    <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'main_page' %}">GiveTrack</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav"
+                aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="ftco-nav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><a href="{% url 'main_page' %}" class="nav-link">Home</a></li>
+                    {% if request.session.user_id %}
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" id="servicesDropdown" role="button" data-toggle="dropdown">Services</a>
+                            <div class="dropdown-menu" aria-labelledby="servicesDropdown">
+                                <a class="dropdown-item" href="{% url 'donation' %}">Donar</a>
+                                <a class="dropdown-item" href="{% url 'beneficiary' %}">Beneficiary</a>
+                                <a class="dropdown-item" href="{% url 'blood' %}">Blood Donar</a>
+                                <a class="dropdown-item" href="{% url 'organ' %}">Organ Donation</a>
+                            </div>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item"><a href="{% url 'about' %}" class="nav-link">About</a></li>
+                    <li class="nav-item"><a href="{% url 'blog' %}" class="nav-link">Blog</a></li>
+                    <li class="nav-item"><a href="{% url 'events' %}" class="nav-link">Events</a></li>
+                    <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
+                    {% if request.session.user_id %}
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" id="userDropdown" role="button" data-toggle="dropdown">
+                                <i class="fas fa-user"></i> Welcome, {{ request.session.username }}
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                                <a class="dropdown-item" href="{% url 'mydonations' %}">My Dashboard</a>
+                            </div>
+                        </li>
+                    {% else %}
+                        <li class="nav-item"><a href="{% url 'login_form' %}" class="nav-link"><i class="fas fa-user"></i> Login</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero-wrap" style="background-image: url({% static 'images/organ_transplant.jpg' %});" data-stellar-background-ratio="0.5">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row no-gutters slider-text align-items-center justify-content-center">
+                <div class="col-md-7 ftco-animate text-center">
+                    <h1 class="mb-3 bread">Organ Donation</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="ftco-section">
+        <div class="container">
+            <div class="row justify-content-center mb-5 pb-3">
+                <div class="col-md-5 heading-section ftco-animate text-center">
+                    <h2 class="mb-4">Organ Donation </h2>
+                    <p>Register as an organ donor and give the gift of life—your decision can save and transform multiple lives.</p>
+                </div>
+            </div>
+
+            <!-- New Advanced Donor Registration Section -->
+            <div class="row justify-content-center mb-5">
+                <div class="col-md-12 ftco-animate">
+                    <div class="advanced-donor-form">
+                        <h3 class="text-center mb-4" style="color: #dc3545;">Advanced Organ Donor Registration</h3>
+                        <div class="progress mb-4">
+                            <div class="progress-bar" role="progressbar" style="width: 0%" id="formProgress"></div>
+                        </div>
+
+<form id="donorForm" method="POST" action="{% url 'submit_donor' %}">
+    {% csrf_token %}
+
+    <!-- Personal Information -->
+    <div class="form-section mb-4">
+        <h4 class="mb-3">Personal Information</h4>
+        <div class="row">
+            <div class="col-md-6 form-group mb-3">
+                <label for="fullName">Full Name <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="fullName" name="full_name" required>
+                <div class="error-message text-danger small" id="fullNameError">Name must be at least 3 characters</div>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+                <label for="dob">Date of Birth <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" id="dob" name="dob" required>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+                <label for="email">Email Address <span class="text-danger">*</span></label>
+                <input type="email" class="form-control" id="email" name="email" required>
+                <div class="error-message text-danger small" id="emailError">Please enter a valid email</div>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+                <label for="phone">Phone Number <span class="text-danger">*</span></label>
+                <input type="tel" class="form-control" id="phone" name="phone" required>
+                <div class="error-message text-danger small" id="phoneError">Please enter a valid phone number</div>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+                <label for="gender">Gender <span class="text-danger">*</span></label>
+                <select class="form-control custom-select" id="gender" name="gender" required>
+                    <option value="">Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+                <label for="emergency_contact">Emergency Contact Number <span class="text-danger">*</span></label>
+                <input type="tel" class="form-control" id="emergency_contact" name="emergency_contact" required>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+                <label for="address">Address <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="address" name="address" required>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+                <label for="city">City <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="city" name="city" required>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+                <label for="state">State <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="state" name="state" required>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+                <label for="country">Country <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="country" name="country" required>
+            </div>
+        </div>
+    </div>
+
+    <!-- Medical Information -->
+    <div class="form-section mb-4">
+        <h4 class="mb-3">Medical Information</h4>
+        <div class="row">
+            <div class="col-md-6 form-group mb-3">
+                <label for="bloodGroup">Blood Group <span class="text-danger">*</span></label>
+                <select class="form-control custom-select" id="bloodGroup" name="blood_group" required>
+                    <option value="">Select Blood Group</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                </select>
+            </div>
+            <div class="col-md-6 form-group mb-3">
+                <label for="weight">Weight (kg) <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" id="weight" name="weight" min="30" max="200" required>
+            </div>
+        </div>
+
+        <div class="form-group mb-3">
+            <label>Organs to Donate (Select all that apply) <span class="text-danger">*</span></label>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="kidney" name="organs[]" value="kidney">
+                        <label class="form-check-label" for="kidney">Kidney</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="liver" name="organs[]" value="liver">
+                        <label class="form-check-label" for="liver">Liver</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="heart" name="organs[]" value="heart">
+                        <label class="form-check-label" for="heart">Heart</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="lungs" name="organs[]" value="lungs">
+                        <label class="form-check-label" for="lungs">Lungs</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="pancreas" name="organs[]" value="pancreas">
+                        <label class="form-check-label" for="pancreas">Pancreas</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="all" name="organs[]" value="all">
+                        <label class="form-check-label" for="all">All possible organs</label>
+                    </div>
+                </div>
+            </div>
+            <div class="error-message text-danger small" id="organsError">Please select at least one organ</div>
+        </div>
+    </div>
+
+    <!-- Health Screening -->
+    <div class="form-section mb-4">
+        <h4 class="mb-3">Health Screening</h4>
+        <div class="form-group mb-3">
+            <label>Do you have any chronic diseases? <span class="text-danger">*</span></label>
+            <div class="form-check form-check-inline">
+                <input type="radio" id="chronicYes" name="chronic_disease" class="form-check-input" value="yes" required>
+                <label class="form-check-label" for="chronicYes">Yes</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input type="radio" id="chronicNo" name="chronic_disease" class="form-check-input" value="no">
+                <label class="form-check-label" for="chronicNo">No</label>
+            </div>
+            <div id="chronicDetails" class="form-group mt-2" style="display: none;">
+                <label for="chronicDetailsInput">Please specify:</label>
+                <textarea class="form-control" id="chronicDetailsInput" name="chronic_details" rows="2"></textarea>
+            </div>
+        </div>
+
+        <div class="form-group mb-3">
+            <label>Have you had any major surgeries in the past 5 years? <span class="text-danger">*</span></label>
+            <div class="form-check form-check-inline">
+                <input type="radio" id="surgeryYes" name="surgery" class="form-check-input" value="yes" required>
+                <label class="form-check-label" for="surgeryYes">Yes</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input type="radio" id="surgeryNo" name="surgery" class="form-check-input" value="no">
+                <label class="form-check-label" for="surgeryNo">No</label>
+            </div>
+            <div id="surgeryDetails" class="form-group mt-2" style="display: none;">
+                <label for="surgeryDetailsInput">Please specify:</label>
+                <textarea class="form-control" id="surgeryDetailsInput" name="surgery_details" rows="2"></textarea>
+            </div>
+        </div>
+
+        <div class="form-group mb-3">
+            <label>Are you currently taking any medications? <span class="text-danger">*</span></label>
+            <div class="form-check form-check-inline">
+                <input type="radio" id="medsYes" name="medications" class="form-check-input" value="yes" required>
+                <label class="form-check-label" for="medsYes">Yes</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input type="radio" id="medsNo" name="medications" class="form-check-input" value="no">
+                <label class="form-check-label" for="medsNo">No</label>
+            </div>
+            <div id="medsDetails" class="form-group mt-2" style="display: none;">
+                <label for="medsDetailsInput">Please list medications:</label>
+                <textarea class="form-control" id="medsDetailsInput" name="medications_details" rows="2"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center">
+        <button type="submit" class="btn btn-danger submit-btn">Submit Registration</button>
+    </div>
+</form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('donorForm');
+    const progressBar = document.getElementById('formProgress');
+    const requiredFields = form.querySelectorAll('[required]');
+    const totalRequired = requiredFields.length;
+
+    // 🟢 Update progress bar
+    function updateProgress() {
+        const filledFields = Array.from(requiredFields).filter(field => {
+            if (field.type === 'radio') {
+                return form.querySelector(`input[name="${field.name}"]:checked`);
+            }
+            return field.value.trim() !== '';
+        }).length;
+        const progress = (filledFields / totalRequired) * 100;
+        progressBar.style.width = `${progress}%`;
+    }
+
+    // 🟢 Show/hide conditional fields
+    function toggleDetails(radioYesId, detailsDivId, radioName) {
+        const yesRadio = document.getElementById(radioYesId);
+        const detailsDiv = document.getElementById(detailsDivId);
+        const radios = document.querySelectorAll(`input[name="${radioName}"]`);
+
+        radios.forEach(radio => {
+            radio.addEventListener('change', function () {
+                if (yesRadio.checked) {
+                    detailsDiv.style.display = 'block';
+                } else {
+                    detailsDiv.style.display = 'none';
+                    const textarea = detailsDiv.querySelector('textarea');
+                    if (textarea) textarea.value = '';
+                }
+                updateProgress();
+            });
+        });
+    }
+
+    // Apply toggleDetails for each conditional section
+    toggleDetails('chronicYes', 'chronicDetails', 'chronic_disease');
+    toggleDetails('surgeryYes', 'surgeryDetails', 'surgery');
+    toggleDetails('medsYes', 'medsDetails', 'medications');
+
+    // 🟢 Organ selection validation
+    const organCheckboxes = document.querySelectorAll('input[name="organs[]"]');
+    const organError = document.getElementById('organsError');
+
+    function validateOrgans() {
+        const checked = Array.from(organCheckboxes).some(chk => chk.checked);
+        organError.style.display = checked ? 'none' : 'block';
+        return checked;
+    }
+
+    organCheckboxes.forEach(chk => {
+        chk.addEventListener('change', () => {
+            validateOrgans();
+            updateProgress();
+        });
+    });
+
+    // 🟢 Input validation
+    function validateInput(field, errorElement, condition) {
+        field.addEventListener('input', () => {
+            errorElement.style.display = condition(field.value) ? 'none' : 'block';
+            updateProgress();
+        });
+    }
+
+    validateInput(
+        document.getElementById('fullName'),
+        document.getElementById('fullNameError'),
+        value => value.trim().length >= 3
+    );
+
+    validateInput(
+        document.getElementById('email'),
+        document.getElementById('emailError'),
+        value => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
+    );
+
+    validateInput(
+        document.getElementById('phone'),
+        document.getElementById('phoneError'),
+        value => /^\d{10}$/.test(value.trim())
+    );
+
+    // 🟢 Update progress bar on all input changes
+    form.querySelectorAll('input, select, textarea').forEach(field => {
+        field.addEventListener('input', updateProgress);
+        field.addEventListener('change', updateProgress);
+    });
+
+    // 🟢 Form submission validation
+    form.addEventListener('submit', function (e) {
+        let firstError = null;
+
+        if (!validateOrgans()) {
+            firstError = organError;
+        }
+
+        if (firstError) {
+            e.preventDefault();
+            firstError.scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+
+});
+</script>

@@ -8,13 +8,15 @@ from django.core.files.base import ContentFile
 from decimal import Decimal
 import pdfkit,io
 from reportlab.pdfgen import canvas
-from .models import CustomUser, Donation,signupdb,payment_donation,blood_module
+from .models import CustomUser, Donation,signupdb,payment_donation,BloodModule,Organ_Donor,Organ
 from django.utils.timezone import now
 
 
 # Public Views
 def main_page(request):
-    return render(request, "main.html")
+    volunteers = Volunteer.objects.filter(is_approved=1)  # Only show approved volunteers
+
+    return render(request, "main.html",{'volunteers':volunteers})
 
 def about(request):
     return render(request, "about.html")
@@ -175,47 +177,138 @@ def mydonations(req):
     return render(req,"mydonation.html",context)
 
 
-
-
-
 import razorpay
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from .models import payment_donation
+import uuid
 
+# Razorpay credentials
+razorpay_client = razorpay.Client(auth=("rzp_test_QzIn7XrT0zJ9If", "9jM71BiWU9CXbvXJd0IZSuTl"))
+
+
+@csrf_exempt
 def save_pay_donation(request):
-    razorpay_client = razorpay.Client(auth=("rzp_test_QzIn7XrT0zJ9If", "9jM71BiWU9CXbvXJd0IZSuTl"))
     if request.method == "POST":
         username = request.POST.get("username")
         category = request.POST.get("category")
-        amount = int(request.POST.get("amt")) * 100  # Convert to paise
-        transaction_id = request.POST.get("transaction_id") # Convert to paise
-        payment_date = request.POST.get("amt") # Convert to paise
+        transaction_id = request.POST.get("transaction_id")  # ✅ Get transaction_id from frontend
 
+        # ✅ Handle amount parsing safely
+        try:
+            amount = int(request.POST.get("amt"))
+            if amount <= 0:
+                return JsonResponse({"success": False, "message": "Invalid amount"})
+        except (ValueError, TypeError):
+            return JsonResponse({"success": False, "message": "Invalid amount format"})
 
-        # 1️⃣ Save donation in the database
+        # ✅ Save donation data to DB with the front-end generated transaction_id
         donation = payment_donation.objects.create(
             username=username,
             category=category,
-            amount=amount / 100,
-            transaction_id=transaction_id,
-            payment_date=payment_date# Convert back to INR
+            amount=amount,
+            transaction_id=transaction_id,  # ✅ Use the correct transaction ID
         )
 
-
-        # 2️⃣ Create Razorpay order
-        order = razorpay_client.order.create({
-            "amount": amount,
+        # ✅ Create Razorpay order with the saved amount
+        order_data = {
+            "amount": amount * 100,  # Convert to paise
             "currency": "INR",
             "payment_capture": "1"
-        })
+        }
+        order = razorpay_client.order.create(order_data)
 
-        return JsonResponse({
-            "success": True,
-            "payment_order_id": order["id"],
-            "amount": amount
-        })
+        # ✅ Store Razorpay order ID if needed
+        donation.razorpay_order_id = order["id"]
+        donation.save()
+
+        # ✅ Return JSON response with order details
+        return JsonResponse({"success": True})
 
     return JsonResponse({"success": False, "message": "Invalid request"})
+
+@csrf_exempt
+def process_payment(request):
+    order_id = request.GET.get("order_id")
+    amount = request.GET.get("amount")
+    username = request.GET.get("username")
+    category = request.GET.get("category")
+
+    # Render a payment page with Razorpay options
+    return render(
+        request,
+        "process_payment.html",
+        {
+            "order_id": order_id,
+            "amount": amount,
+            "username": username,
+            "category": category,
+            "razorpay_key": "rzp_test_QzIn7XrT0zJ9If",
+        },
+    )
+@csrf_exempt
+def verify_payment(request):
+    if request.method == "POST":
+        payment_id = request.POST.get("razorpay_payment_id")
+        order_id = request.POST.get("razorpay_order_id")
+        signature = request.POST.get("razorpay_signature")
+
+        try:
+            # Verify Razorpay signature
+            params_dict = {
+                "razorpay_order_id": order_id,
+                "razorpay_payment_id": payment_id,
+                "razorpay_signature": signature,
+            }
+
+            result = razorpay_client.utility.verify_payment_signature(params_dict)
+
+            if result:
+                # ✅ Update payment_donation with payment details
+                donation = payment_donation.objects.get(transaction_id=order_id)
+                donation.transaction_id = payment_id
+                donation.payment_status = "Success"
+                donation.save()
+
+                return redirect("/thank-you/")  # Redirect to thank you page
+
+        except Exception as e:
+            print(f"❌ Razorpay Verification Failed: {str(e)}")
+            return redirect("/payment-failed/")
+
+    return JsonResponse({"success": False, "message": "Invalid request"})
+
+
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from .models import payment_donation
+
+
+def payment_success(request):
+    if request.method == "POST":
+        transaction_id = request.POST.get("transaction_id")
+        payment_id = request.POST.get("payment_id")
+        payment_status = request.POST.get("payment_status")
+
+        # Update payment status
+        try:
+            donation = payment_donation.objects.get(transaction_id=transaction_id)
+            donation.payment_id = payment_id
+            donation.payment_status = payment_status
+            donation.save()
+
+            return render(request, "thank_you.html", {"transaction_id": transaction_id})
+
+        except payment_donation.DoesNotExist:
+            return HttpResponse("Invalid Transaction ID")
+
+    return redirect("main_page")
+
+
+
+
+
 
 
 
@@ -325,26 +418,47 @@ def blood_re(req):
     return render(req,"blood_re.html")
 
 
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import BloodModule
+
 def save_blooddonor(request):
     if request.method == "POST":
         full_name = request.POST.get('full_name')
         blood_group = request.POST.get('blood_group')
         mobile = request.POST.get('mobile')
-        location = request.POST.get('location')
-        availability = request.POST.get('availability')
+        age = request.POST.get('age')
+        state = request.POST.get('state')
+        city = request.POST.get('city')
+        recent_donation = request.POST.get('recent_donation')
+        chronic_diseases = request.POST.get('chronic_diseases')
+        recent_procedure = request.POST.get('recent_procedure')
+        pregnant_or_breastfeeding = request.POST.get('pregnant_or_breastfeeding')
+        recent_vaccination = request.POST.get('recent_vaccination')
+
+        # Ensure all required fields are provided
+        if not all([full_name, blood_group, mobile, age, state, city]):
+            messages.error(request, "All fields are required.")
+            return redirect(blood_re)  # Redirect to the form page
 
         # Save donor details
-        donor = blood_module(
+        donor = BloodModule(
             full_name=full_name,
             blood_group=blood_group,
             mobile=mobile,
-            location=location,
-            availability=availability
+            age=age,
+            state=state,
+            city=city,
+            recent_donation=recent_donation == 'Yes',  # Convert to Boolean
+            chronic_diseases=chronic_diseases == 'Yes',
+            recent_procedure=recent_procedure == 'Yes',
+            pregnant_or_breastfeeding=pregnant_or_breastfeeding == 'Yes',
+            recent_vaccination=recent_vaccination == 'Yes',
         )
         donor.save()
 
         messages.success(request, "Blood donor registered successfully!")
-        return redirect(blood)  # Redirect to the blood donor list page
+        return redirect(blood)  # Redirect to donor list page (adjust as needed)
 
     return render(request, 'blood_re.html')
 
@@ -356,23 +470,31 @@ def save_blooddonor(request):
 from django.shortcuts import render
 from django.http import JsonResponse
 import json
-from .models import blood_module
 
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import BloodModule  # Ensure correct import
+
+@csrf_exempt  # Use CSRF protection in production
 def search_donors(request):
     if request.method == "POST":
         try:
-            data = json.loads(request.body)  # Parse JSON data from request
+            data = json.loads(request.body)  # Parse JSON data
             blood_group = data.get("blood_group")
-            location = data.get("location")
+            city = data.get("city")  # Change 'location' to 'city'
 
-            # Filter donors based on blood group and location
-            donors = blood_module.objects.filter(blood_group=blood_group, location__icontains=location)
+            # Filter donors based on blood group and city
+            donors = BloodModule.objects.filter(blood_group=blood_group, city__icontains=city)
 
-            donor_list = list(donors.values("full_name", "blood_group", "location", "mobile"))
+            donor_list = list(donors.values("full_name", "blood_group", "city", "mobile","age","state"))  # Use city instead of location
 
             return JsonResponse(donor_list, safe=False)
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except Exception as e:
+            print("Error:", str(e))  # Debugging output
+            return JsonResponse({"error": str(e)}, status=400)
 
     return JsonResponse({"error": "Invalid request"}, status=400)
 
@@ -381,4 +503,127 @@ from django.http import HttpResponseForbidden
 def csrf_failure(request, reason=""):
     return HttpResponseForbidden("CSRF verification failed. Please reload the page and try again.")
 
+import razorpay
+from django.http import JsonResponse
+from django.conf import settings
 
+# Razorpay API Key and Secret
+razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+def create_razorpay_order(request):
+    if request.method == "POST":
+        amount = int(request.POST.get('amt')) * 100  # Convert to paise
+        currency = "INR"
+
+        # Create Razorpay order
+        razorpay_order = razorpay_client.order.create({
+            "amount": amount,
+            "currency": currency,
+            "payment_capture": "1",
+        })
+
+        if razorpay_order:
+            return JsonResponse({
+                "success": True,
+                "payment_order_id": razorpay_order['id'],
+                "amount": amount // 100,  # Send back the original amount
+            })
+        else:
+            return JsonResponse({"success": False, "error": "Failed to create Razorpay order."})
+    else:
+        return JsonResponse({"success": False, "error": "Invalid request method."})
+
+def thank_you(request):
+    last_payment = payment_donation.objects.filter(username=request.session.get("username")).order_by('-id').first()
+
+    return render(request, "thank_you.html",{"last_payment":last_payment})
+
+def organ(req):
+    return render(req,"organ.html")
+
+
+from django.shortcuts import render, redirect
+from frontendapp.models import Organ_Donor, Organ
+
+def submit_donor(request):
+    if request.method == "POST":
+        full_name = request.POST.get("full_name")
+        dob = request.POST.get("dob")
+        email = request.POST.get("email")
+        phone = request.POST.get("phone")
+        gender = request.POST.get("gender")
+        emergency_contact = request.POST.get("emergency_contact")
+        address = request.POST.get("address")
+        city = request.POST.get("city")
+        state = request.POST.get("state")
+        country = request.POST.get("country")
+        blood_group = request.POST.get("blood_group")
+        weight = request.POST.get("weight")
+        chronic_disease = request.POST.get("chronic_disease") == "yes"
+        chronic_details = request.POST.get("chronic_details", "")
+        surgery = request.POST.get("surgery") == "yes"
+        surgery_details = request.POST.get("surgery_details", "")
+        medications = request.POST.get("medications") == "yes"
+        medications_details = request.POST.get("medications_details", "")
+
+        # Get selected organs
+        organ_values = request.POST.getlist("organs[]")
+        print("Selected Organs:", organ_values)  # Debugging line
+
+
+
+        # Create the donor entry
+        donor = Organ_Donor.objects.create(
+            full_name=full_name,
+            dob=dob,
+            email=email,
+            phone=phone,
+            gender=gender,
+            emergency_contact=emergency_contact,
+            address=address,
+            city=city,
+            state=state,
+            country=country,
+            blood_group=blood_group,
+            weight=weight,
+            chronic_disease=chronic_disease,
+            chronic_details=chronic_details,
+            surgery=surgery,
+            surgery_details=surgery_details,
+            medications=medications,
+            medications_details=medications_details,
+        )
+
+        organ_objects = Organ.objects.filter(name__in=[o.capitalize() for o in organ_values])
+        print("Organ Objects Found:", organ_objects)  # Debugging step
+        donor.organs.set(organ_objects)  # ✅ Correct way to assign many-to-many
+
+        return redirect(main_page)  # Change to your actual success URL
+
+    return render(request, "organ.html")
+from django.shortcuts import render, redirect
+from frontendapp.models import Volunteer
+from django.contrib import messages
+
+def volunteer_register(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        address = request.POST.get('address')
+        city = request.POST.get('city')
+        phone = request.POST.get('phone')
+        profile_pic = request.FILES.get('profilePic')  # handles file input
+
+        # Save the data to the model
+        Volunteer.objects.create(
+            name=name,
+            email=email,
+            address=address,
+            city=city,
+            phone=phone,
+            profile_pic=profile_pic
+        )
+        messages.success(request, "Volunteer Registered Successfully!")
+        return redirect(main_page)  # or any success page
+
+    return render(request, 'volunteer.html')  # replace with your template

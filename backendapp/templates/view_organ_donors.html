@@ -1,0 +1,134 @@
+{% extends 'index.html' %}
+{% block content %}
+{% load static %}
+
+<style>
+body {
+    background-color: #f8f9fa;
+}
+
+.card-container {
+    max-width: 95%;
+    margin: auto;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    background-color: white;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="card-container">
+    <div class="card">
+        <h3 class="text-center mb-4">Organ Donors List</h3>
+        <div class="table-container">
+            <table id="organDonorTable" class="table table-striped table-bordered display expandable-table">
+                <thead>
+                    <tr>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Gender</th>
+                        <th>Blood Group</th>
+                        <th>Weight</th>
+                        <th>City</th>
+                        <th>State</th>
+                        <th>Country</th>
+                        <th>Organs Donated</th>
+                        <th>Chronic Disease</th>
+                        <th>Surgeries</th>
+                        <th>Medications</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in organ_donors %}
+                    <tr>
+                        <td>{{ i.full_name }}</td>
+                        <td>{{ i.email }}</td>
+                        <td>{{ i.phone }}</td>
+                        <td>{{ i.gender }}</td>
+                        <td>{{ i.blood_group }}</td>
+                        <td>{{ i.weight }}</td>
+                        <td>{{ i.city }}</td>
+                        <td>{{ i.state }}</td>
+                        <td>{{ i.country }}</td>
+                        <td>{% for organ in i.organs.all %} {{ organ.name }}, {% endfor %}</td>
+                        <td>{{ i.chronic_disease|yesno:"Yes,No" }}</td>
+                        <td>{{ i.surgery|yesno:"Yes,No" }}</td>
+                        <td>{{ i.medications|yesno:"Yes,No" }}</td>
+                        <td>
+                            <a href="#" class="btn btn-primary btn-sm" title="Edit"
+                                onclick="confirmEdit('{% url 'edit_organ_donor' i.id %}')">
+                                <i class="fas fa-edit"></i>
+                            </a>&nbsp;
+
+                            <a href="#" class="btn btn-danger btn-sm" title="Delete"
+                                onclick="confirmDelete('{% url 'delete_organ_donor' i.id %}')">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function () {
+    $('#organDonorTable').DataTable({
+        responsive: true,
+        paging: true,
+        searching: true,
+        ordering: true,
+        language: {
+            search: "Search Organ Donor:"
+        },
+    });
+});
+
+function confirmEdit(editUrl) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "Do you want to edit this Organ Donor Details?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, edit it!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = editUrl;
+        }
+    });
+}
+
+function confirmDelete(deleteUrl) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this donor!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = deleteUrl;
+        }
+    });
+}
+</script>
+
+{% endblock %}
